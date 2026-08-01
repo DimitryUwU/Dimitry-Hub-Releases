@@ -98,6 +98,40 @@ jobs:
           & $iscc "/DMyAppVersion=${{ steps.config.outputs.version }}" installer.iss
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup terminó con código $LASTEXITCODE." }
 
+      - name: Probar instalación y arranque
+        shell: pwsh
+        working-directory: build/src
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = (Resolve-Path 'release/Dimitry_Hub_Setup_x64.exe').Path
+          $installDir = Join-Path $env:RUNNER_TEMP 'DimitryHub-Installed'
+          $install = Start-Process -FilePath $installer -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$installDir" -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "El instalador terminó con código $($install.ExitCode)." }
+          $appExe = Join-Path $installDir 'DimitryHub.exe'
+          if (-not (Test-Path $appExe)) { throw 'El ejecutable instalado no existe.' }
+          $appProcess = Start-Process -FilePath $appExe -PassThru
+          try {
+            $ready = $false
+            for ($attempt = 0; $attempt -lt 60; $attempt++) {
+              try {
+                $health = Invoke-RestMethod -Uri 'http://127.0.0.1:8765/api/health' -TimeoutSec 2
+                if ($health.status -eq 'ok') { $ready = $true; break }
+              } catch {}
+              Start-Sleep -Milliseconds 500
+            }
+            if (-not $ready) { throw 'La aplicación instalada no respondió a tiempo.' }
+            $home = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8765/' -TimeoutSec 5
+            if ($home.Content -notmatch 'Dimitry Hub') { throw 'La página inicial instalada no contiene el contenido esperado.' }
+            Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8765/api/system/shutdown' -TimeoutSec 5 | Out-Null
+            Wait-Process -Id $appProcess.Id -Timeout 20 -ErrorAction SilentlyContinue
+          } finally {
+            Stop-Process -Id $appProcess.Id -Force -ErrorAction SilentlyContinue
+          }
+          $uninstaller = Join-Path $installDir 'unins000.exe'
+          if (-not (Test-Path $uninstaller)) { throw 'No se encontró el desinstalador.' }
+          $uninstall = Start-Process -FilePath $uninstaller -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait -PassThru
+          if ($uninstall.ExitCode -ne 0) { throw "El desinstalador terminó con código $($uninstall.ExitCode)." }
+
       - name: Generate manifest and checksums
         shell: pwsh
         working-directory: build/src
