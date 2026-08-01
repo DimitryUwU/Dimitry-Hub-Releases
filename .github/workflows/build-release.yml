@@ -1,12 +1,6 @@
 name: Build and publish Dimitry Hub
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "source/**"
-      - ".github/workflows/build-release.yml"
-      - "release-config.json"
   workflow_dispatch:
 
 permissions:
@@ -33,7 +27,7 @@ jobs:
           "version=$($config.version)" >> $env:GITHUB_OUTPUT
           "tag=v$($config.version)" >> $env:GITHUB_OUTPUT
 
-      - name: Verify and extract source archive
+      - name: Verify, extract and patch source archive
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -43,9 +37,22 @@ jobs:
           $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
           $expected = $config.source_sha256.ToLowerInvariant()
           if ($actual -ne $expected) { throw "SHA-256 incorrecto. Esperado: $expected. Obtenido: $actual" }
+
           Remove-Item build -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force build/src | Out-Null
           Expand-Archive $archive build/src -Force
+
+          if (Test-Path 'patches/current') {
+            Copy-Item 'patches/current/*' 'build/src' -Recurse -Force
+          }
+
+          @"
+          APP_VERSION = "$($config.version)"
+          APP_NAME = "Dimitry Hub"
+          UPDATE_REPOSITORY = "DimitryUwU/Dimitry-Hub-Releases"
+          LATEST_MANIFEST_URL = "https://raw.githubusercontent.com/DimitryUwU/Dimitry-Hub-Releases/main/latest.json"
+          "@ | Set-Content 'build/src/app/version.py' -Encoding utf8
+          $config.version | Set-Content 'build/src/VERSION.txt' -Encoding ascii
 
       - name: Set up Python
         uses: actions/setup-python@v5
