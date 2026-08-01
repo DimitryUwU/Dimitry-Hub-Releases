@@ -1,7 +1,7 @@
 {
-  "version": "1.0.1",
-  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.0.1/Dimitry_Hub_Setup_x64.exe",
-  "sha256": "4b79d6d677bcae53586a56c0125248e2f1f5e3c8552c5bbfa029ef6657141981",
-  "notes": "Corrige el inicio de Dimitry Hub instalado en Windows. La aplicación ahora incluye correctamente todos sus módulos, espera a que el servidor local esté listo antes de abrir el navegador y guarda un informe visible si ocurre un error de arranque.",
-  "published_at": "2026-08-01T03:28:13.5918405Z"
+  "version": "1.0.2",
+  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.0.2/Dimitry_Hub_Setup_x64.exe",
+  "sha256": "58067414bd90537900f40160508f87ff478b494a7e2ecd4fd98d4d0c6e5c9350",
+  "notes": "Corrige los avisos repetidos de Tema aplicado y Tipografía aplicada que aparecían al hacer clic en cualquier lugar de cualquier pestaña. Los controles de apariencia ahora solo responden a sus botones correspondientes y no vuelven a guardar una selección que ya estaba activa.",
+  "published_at": "2026-08-01T03:41:03.3697350Z"
 }
