@@ -15,6 +15,7 @@ class PalworldWikiTests(unittest.TestCase):
             "Lista completa de las mejores habilidades pasivas de Pals": "palworld-1.0-passives",
             "Coordenadas de las mejores ubicaciones para una base de minería": "palworld-1.0-mining-bases",
             "¿Cómo conseguir aceite de Pal de alta calidad?": "palworld-1.0-high-quality-pal-oil",
+            "¿Cómo creo un Pal perfecto macho y hembra manteniendo nivel 1, trabajo predeterminado y cuatro pasivas?": "palworld-perfect-pal-profile",
         }
         for question, expected_key in cases.items():
             with self.subTest(question=question):
@@ -25,6 +26,14 @@ class PalworldWikiTests(unittest.TestCase):
                 answer = offline_knowledge_answer(question, results)
                 self.assertIn(results[0]["title"], answer)
                 self.assertNotIn("Mod Support Improvement", answer)
+                if expected_key == "palworld-perfect-pal-profile":
+                    self.assertIn("nivel 1", answer.lower())
+                    self.assertIn("exactamente cuatro pasivas", answer.lower())
+                    self.assertIn("uno macho y otro hembra", answer.lower())
+                    self.assertIn("globalpalstorage.sav", answer.lower())
+                    self.assertIn("gumoss con flor roja", answer.lower())
+                    self.assertIn("panthalus alfa boss_kingwhale", answer.lower())
+                    self.assertIn("astralym excluido", answer.lower())
 
 
 if __name__ == "__main__":

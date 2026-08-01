@@ -451,7 +451,12 @@ def seed_knowledge(db: sqlite3.Connection) -> None:
         (
             "palworld", "actualizacion", "base", "one-click-sync",
             "Actualización de la biblioteca",
-            "El botón de actualización del editor descarga e indexa la fuente configurada. El botón de noticias consulta las publicaciones de Steam. Los paquetes ZIP permiten añadir dumps, tablas o guías propias.",
+            "Sincronizar datos consulta las noticias oficiales de Steam y comprueba la versión técnica del editor, pero nunca modifica saves ni instala programas. Actualizar componente descarga manualmente la publicación más reciente de Palworld Save Pal. Tras un parche, deja primero que el juego migre el guardado y no edites especies, pasivas o campos nuevos hasta que el editor actualizado confirme compatibilidad. Los paquetes ZIP permiten añadir dumps, tablas o guías propias a la biblioteca.",
+        ),
+        (
+            "palworld", "edicion-save", "base-guide", "palworld-perfect-pal-profile",
+            "Regla del proyecto: perfil de Pal perfecto",
+            "Para crear la versión perfecta de un Pal, analiza primero su especie y su función real: combate, montura aérea o terrestre, base, rancho, transporte u otra especialidad. Por cada especie crea dos ejemplares equivalentes, uno macho y otro hembra, tanto en la partida normal como en GlobalPalStorage.sav, salvo una exclusión expresa o una incompatibilidad verificada. Ambos conservan exactamente el mismo nombre, build y ataques, el nivel 1 y las aptitudes o niveles de trabajo propios de la especie en su valor predeterminado. Maximiza IV, almas, rango y las demás estadísticas o mejoras compatibles que el editor actualizado exponga, sin inventar campos ni códigos. Asigna exactamente cuatro pasivas compatibles y útiles para esa función, y usa las mismas cuatro en ambos ejemplares; una pasiva de velocidad de vuelo solo corresponde a una montura aérea que pueda aprovecharla. Mantén las decisiones históricas del proyecto: Gumoss con flor roja, Panthalus Alfa BOSS_KingWhale y Astralym excluido de la Caja Pal Global mientras no se indique lo contrario. Si la especie nueva, la pasiva o su identificador aún no aparece en Palworld Save Pal, detén la edición y espera una versión compatible. Trabaja siempre sobre la copia de la sesión de Dimitry Hub y valida los dos ejemplares dentro del juego antes de reemplazar el respaldo.",
         ),
         (
             "palworld", "guia-inicial", "base-guide", "palworld-1.0-early-pals",
