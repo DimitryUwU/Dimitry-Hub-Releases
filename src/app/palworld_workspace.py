@@ -163,8 +163,9 @@ def create_session_from_path(temp_path: Path, original_name: str, expected_kind:
 
     discovered: list[dict] = []
     if kind == "save_bundle":
-        for item in _safe_extract_saves(stored, extracted):
-            rel = item.relative_to(extracted).as_posix()
+        extracted_root = extracted.resolve()
+        for item in _safe_extract_saves(stored, extracted_root):
+            rel = item.relative_to(extracted_root).as_posix()
             item_kind = detect_save_kind(item.name) if item.suffix.lower() == ".sav" else "config"
             discovered.append({
                 "name": item.name,

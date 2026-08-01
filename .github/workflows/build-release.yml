@@ -42,6 +42,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          $config = Get-Content release-config.json -Raw | ConvertFrom-Json
           if (-not (Test-Path 'src/app/main.py')) { throw 'Falta el árbol src.' }
           New-Item -ItemType Directory -Force build | Out-Null
           Copy-Item src build/src -Recurse -Force
