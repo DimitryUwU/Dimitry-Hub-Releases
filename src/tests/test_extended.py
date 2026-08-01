@@ -1,0 +1,166 @@
+from __future__ import annotations
+
+import os
+import tempfile
+import unittest
+import zipfile
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+
+class ExtendedTests(unittest.TestCase):
+    def test_zip_path_traversal_is_blocked(self):
+        from app.knowledge import safe_extract_zip
+        with tempfile.TemporaryDirectory() as tmp:
+            archive = Path(tmp) / "bad.zip"
+            with zipfile.ZipFile(archive, "w") as zf:
+                zf.writestr("../outside.txt", "bad")
+            with self.assertRaises(ValueError):
+                safe_extract_zip(archive, Path(tmp) / "out")
+
+    def test_analyzer_recognizes_unity_il2cpp(self):
+        from app.analyzer import analyze_bundle
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "global-metadata.dat").write_bytes(b"meta")
+            (root / "GameAssembly.dll").write_bytes(b"dll")
+            result = analyze_bundle(root)
+            self.assertTrue(any("IL2CPP" in item for item in result["classification"]))
+
+    def test_monograph_headings_are_black(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            os.environ["DIMITRY_HUB_DATA"] = tmp
+            # Import in a fresh process would be ideal; XML assertion still validates the style code.
+            from app.documents import create_monograph_docx
+            path = create_monograph_docx(
+                {"title": "Prueba", "author": "Autor"},
+                "# Introducción\n\nTexto de prueba.\n\n# Conclusiones\n\nConclusión.",
+                "Autor, A. (2026). Obra.",
+            )
+            with zipfile.ZipFile(path) as zf:
+                styles = zf.read("word/styles.xml").decode("utf-8")
+            self.assertIn('w:val="000000"', styles)
+
+    def test_monograph_never_exports_internal_instructions(self):
+        from app.main import _deterministic_monograph_structure
+
+        structured = _deterministic_monograph_structure(
+            "La introducción presenta el tema.\\n\\nEl desarrollo explica los hechos comprobados."
+        )
+        self.assertIn("# Introducción", structured)
+        self.assertNotIn("[Redacte", structured)
+        self.assertNotIn("[Incluya", structured)
+
+    def test_peruvian_legal_document_uses_identity_fields(self):
+        from app.documents import create_legal_docx
+
+        path = create_legal_docx(
+            "solicitud",
+            {
+                "authority": "SEÑOR DIRECTOR",
+                "applicant": "Persona de prueba",
+                "dni": "12345678",
+                "address": "Abancay",
+                "city_date": "Abancay, 1 de agosto de 2026",
+            },
+            "I. Petitorio\nSolicito atención.\nII. Fundamentos de hecho\n1. Hecho comprobado.",
+        )
+        with zipfile.ZipFile(path) as zf:
+            document = zf.read("word/document.xml").decode("utf-8")
+        self.assertIn("Persona de prueba", document)
+        self.assertIn("12345678", document)
+        self.assertIn("1. Hecho comprobado.", document)
+        self.assertNotIn("[DNI PENDIENTE]", document)
+        root = ET.fromstring(document)
+        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+        paragraphs = {
+            "".join(node.text or "" for node in paragraph.findall(".//w:t", ns)): paragraph
+            for paragraph in root.findall(".//w:body/w:p", ns)
+        }
+        for heading in ("I. PETITORIO", "II. FUNDAMENTOS DE HECHO", "POR TANTO:"):
+            self.assertIsNotNone(paragraphs[heading].find("w:pPr/w:keepNext", ns))
+
+    def test_peruvian_minutes_use_a_specific_structure(self):
+        from app.documents import create_legal_docx
+
+        path = create_legal_docx(
+            "acta_reunion",
+            {
+                "authority": "Asociación de prueba",
+                "applicant": "Persona responsable",
+                "address": "Abancay",
+                "city_date": "1 de agosto de 2026",
+                "time": "10:00 a. m.",
+                "sumilla": "Aprobación del plan de trabajo",
+                "participants": "Ana Pérez\nLuis Quispe",
+            },
+            "I. Agenda\nRevisión del plan.\nII. Desarrollo de la reunión\nSe revisaron los hitos.\nIII. Acuerdos\nSe aprobó el plan por unanimidad.",
+        )
+        with zipfile.ZipFile(path) as zf:
+            document = zf.read("word/document.xml").decode("utf-8")
+        self.assertIn("ACTA DE REUNIÓN", document)
+        self.assertIn("PARTICIPANTES", document)
+        self.assertIn("Ana Pérez", document)
+        self.assertIn("ACUERDOS", document)
+        self.assertIn("Se aprobó el plan por unanimidad.", document)
+        self.assertNotIn("POR TANTO", document)
+
+    def test_every_available_peruvian_legal_document_is_created(self):
+        from app.database import GENERATED_DIR
+        from app.main import LegalRequest, legal_create
+
+        kinds = (
+            "solicitud",
+            "carta_notarial",
+            "apersonamiento",
+            "reconsideracion",
+            "apelacion",
+            "denuncia",
+            "descargo",
+            "poder_simple",
+            "acta_reunion",
+        )
+        for kind in kinds:
+            with self.subTest(kind=kind):
+                fields = {
+                    "authority": "MUNICIPALIDAD DISTRITAL DE PRUEBA",
+                    "applicant": "María Elena Quispe Rojas",
+                    "address": "Jirón Los Andes 123, Abancay, Apurímac",
+                    "city_date": "Abancay, 1 de agosto de 2026",
+                    "sumilla": "Solicito evaluación del pedido documentado",
+                }
+                if kind == "acta_reunion":
+                    fields.update({"time": "10:00 a. m.", "participants": "María Elena Quispe Rojas\nJosé Luis Cáceres Soto"})
+                    request_text = "Revisión del pedido y de los documentos entregados."
+                    facts = "Las personas participantes revisaron los antecedentes y formularon observaciones."
+                    evidence = "Se acordó remitir las observaciones por escrito y conservar una copia del acta."
+                else:
+                    fields["dni"] = "12345678"
+                    if kind == "poder_simple":
+                        fields.update({"proxy_name": "José Luis Cáceres Soto", "proxy_dni": "87654321"})
+                    request_text = "Solicito que se evalúe el pedido conforme a los hechos y documentos que se acompañan."
+                    facts = "1. El 15 de julio de 2026 se presentó el documento indicado.\n2. Se conserva el cargo de recepción."
+                    evidence = "Anexo 1-A: copia del cargo de recepción."
+                result = legal_create(LegalRequest(
+                    kind=kind,
+                    fields=fields,
+                    facts=facts,
+                    legal_basis="",
+                    evidence=evidence,
+                    request_text=request_text,
+                    use_ai=False,
+                    verify_web=False,
+                ))
+                target = GENERATED_DIR / result["filename"]
+                self.assertTrue(target.is_file())
+                self.assertGreater(target.stat().st_size, 1000)
+                with zipfile.ZipFile(target) as zf:
+                    document = zf.read("word/document.xml").decode("utf-8")
+                self.assertIn("María Elena Quispe Rojas", document)
+                self.assertIn("Solicito evaluación del pedido documentado", document)
+                self.assertNotIn("[DNI PENDIENTE]", document)
+                self.assertNotIn("[NOMBRE COMPLETO PENDIENTE]", document)
+
+
+if __name__ == "__main__":
+    unittest.main()

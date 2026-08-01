@@ -1,23 +1,28 @@
-# Dimitry Hub — canal oficial de versiones
+# Dimitry Hub
 
-Este repositorio publica el instalador oficial de Dimitry Hub para Windows y los archivos necesarios para mantener la aplicación actualizada.
+Dimitry Hub es una aplicación local para Windows con servidor Python e interfaz web. El código fuente reproducible y legible vive en `src/`.
 
-## Funcionamiento
+## Desarrollo local
 
-- Se instala una sola vez con `Dimitry_Hub_Setup_x64.exe`.
-- Al abrirse, Dimitry Hub consulta `latest.json`.
-- Si existe una versión más reciente, descarga el instalador oficial y verifica su SHA-256.
-- Los proyectos, documentos y ajustes personales se conservan en `%LOCALAPPDATA%\Dimitry Hub\Data`.
-- El mismo instalador sirve para una instalación nueva o para actualizar una existente.
+1. Instala Python 3.12.
+2. Instala las dependencias con `python -m pip install -r src/requirements.txt`.
+3. Ejecuta `python src/run.py`.
+4. Abre `http://127.0.0.1:8765`.
 
-## Publicación
+## Pruebas
 
-GitHub Actions compila el programa en Windows, genera el instalador, crea la publicación de GitHub y actualiza automáticamente:
+Desde `src/` ejecuta:
 
-- `Dimitry_Hub_Setup_x64.exe`
-- `latest.json`
-- `checksums.sha256`
+```text
+python -m compileall app run.py updater.py
+python -m unittest discover -s tests -p "test_*.py"
+node --check app/static/app.js
+```
 
-El código fuente verificado de la versión 1.0.0 se almacena en:
+El flujo de GitHub Actions valida los pull requests, compila los ejecutables, genera un instalador de prueba y conserva el resultado como artefacto.
 
-`source/Dimitry_Hub_Source_v1.0.0.zip`
+## Publicación protegida
+
+Un cambio en `main` no publica una versión. La publicación solo se permite mediante una ejecución manual del flujo, escribiendo la confirmación `PUBLICAR`. Antes de hacerlo deben revisarse el artefacto de Windows, las pruebas y las capturas.
+
+`latest.json` y las sumas oficiales solo se actualizan durante una publicación manual confirmada.
