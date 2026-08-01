@@ -1,6 +1,6 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "channel": "stable",
   "source_sha256": "9a343f22e8b1b5a8e2690f9cfc24d2614d4ee6596bea67e9ff2ad7429a0982e4",
-  "notes": "Mejora la instalación y el uso diario: el instalador cierra automáticamente el proceso de Dimitry Hub, el botón superior ahora indica Sincronizar datos y muestra el nombre y detalle de cualquier fuente con error, se corrige la conexión con GitHub del editor de Palworld, el botón con la inicial abre un panel de perfil y control rápido con opción para cerrar realmente la aplicación, y Dimitry AI deja claro cuando todavía no existe ningún proveedor configurado."
+  "notes": "Corrige definitivamente la descarga técnica de Palworld Save PAL mediante enlaces directos de GitHub sin reenviar cabeceras incompatibles, añade Actualizaciones como sección visible en el menú lateral, y mejora Comprobar la aplicación para informar claramente si existe una versión nueva o si la versión instalada ya es la última, mostrando la versión actual, la última publicada y la fecha de comprobación."
 }
