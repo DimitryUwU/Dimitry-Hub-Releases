@@ -522,20 +522,25 @@ def offline_knowledge_answer(question: str, results: list[dict]) -> str:
             "No encontré una coincidencia suficiente en la biblioteca local de Palworld. "
             "Prueba con el nombre exacto del Pal, habilidad, pasiva, archivo o código interno."
         )
-    lines = [
-        "Respuesta local de la biblioteca de Palworld (sin depender de una IA externa):",
-        "",
-    ]
-    for index, item in enumerate(results[:6], 1):
+    top_score = float(results[0].get("score") or 0)
+    selected = (
+        [
+            item for item in results
+            if float(item.get("score") or 0) >= max(1.0, top_score * 0.55)
+        ][:4]
+        if top_score > 0
+        else results[:4]
+    )
+    lines = ["Guía local de Palworld basada en las entradas más pertinentes:", ""]
+    for index, item in enumerate(selected, 1):
         title = re.sub(r"\s+", " ", str(item.get("title") or "Fuente local")).strip()
         category = re.sub(r"\s+", " ", str(item.get("category") or "general")).strip()
         snippet = re.sub(r"\s+", " ", str(item.get("snippet") or "")).strip()
-        if len(snippet) > 420:
-            snippet = snippet[:417].rstrip() + "…"
+        max_length = 1200 if item.get("source") == "base-guide" else 420
+        if len(snippet) > max_length:
+            snippet = snippet[:max_length - 3].rstrip() + "…"
         lines.append(f"{index}. {title} [{category}]")
         lines.append(snippet or "La entrada coincide con la búsqueda, pero no contiene un resumen legible.")
         lines.append("")
-    lines.append(
-        "Estas son coincidencias técnicas recuperadas de la biblioteca; una coincidencia de texto no confirma por sí sola cómo funciona el juego."
-    )
+    lines.append("Verifica coordenadas, estadísticas, botín y precios dentro de la versión instalada: las guías comunitarias pueden quedar desactualizadas.")
     return "\n".join(lines)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import unicodedata
 import zipfile
 from collections import Counter
 from pathlib import Path
@@ -21,6 +22,12 @@ MAX_ZIP_ENTRIES = 50_000
 MAX_ZIP_UNCOMPRESSED = 3 * 1024 * 1024 * 1024
 MAX_ZIP_MEMBER = 512 * 1024 * 1024
 TOKEN_RE = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_]{3,}")
+SEARCH_STOPWORDS = {
+    "cual", "cuales", "como", "donde", "para", "porque", "por", "que",
+    "los", "las", "una", "uno", "unos", "unas", "son", "sus", "con",
+    "del", "desde", "este", "esta", "esto", "lista", "completa", "dame",
+    "the", "and", "for", "with", "from", "what", "which", "how",
+}
 
 
 def safe_extract_zip(zip_path: Path, target_dir: Path) -> list[Path]:
@@ -224,21 +231,34 @@ def index_directory(root: Path, domain: str, source: str) -> tuple[int, int]:
 
 
 def tokenize(text: str) -> list[str]:
-    return [token.lower() for token in TOKEN_RE.findall(text)]
+    tokens = []
+    for token in TOKEN_RE.findall(text):
+        folded = unicodedata.normalize("NFKD", token).encode("ascii", "ignore").decode("ascii").lower()
+        if folded:
+            tokens.append(folded)
+    return tokens
 
 
 def search_knowledge(domain: str, query: str, limit: int = 12) -> list[dict]:
-    tokens = tokenize(query)
+    raw_tokens = [token.lower() for token in TOKEN_RE.findall(query)]
+    tokens = [token for token in tokenize(query) if token not in SEARCH_STOPWORDS]
     if not tokens:
         return []
-    clauses = " OR ".join(["lower(title) LIKE ? OR lower(content) LIKE ?"] * min(len(tokens), 8))
+    search_terms = []
+    for raw, folded in zip(raw_tokens, tokenize(query)):
+        if folded in SEARCH_STOPWORDS:
+            continue
+        for term in (raw, folded):
+            if term not in search_terms:
+                search_terms.append(term)
+    clauses = " OR ".join(["lower(title) LIKE ? OR lower(content) LIKE ?"] * min(len(search_terms), 12))
     params: list[str] = []
-    for token in tokens[:8]:
+    for token in search_terms[:12]:
         like = f"%{token}%"
         params.extend([like, like])
     with connect() as db:
         rows = db.execute(
-            f"SELECT * FROM knowledge_entries WHERE domain=? AND ({clauses}) LIMIT 200",
+            f"SELECT * FROM knowledge_entries WHERE domain=? AND (({clauses}) OR source='base-guide') LIMIT 400",
             [domain, *params],
         ).fetchall()
 
@@ -249,18 +269,36 @@ def search_knowledge(domain: str, query: str, limit: int = 12) -> list[dict]:
         title_tokens = Counter(tokenize(item["title"]))
         content_tokens = Counter(tokenize(item["content"][:25_000]))
         score = 0.0
+        matched: set[str] = set()
         for token, count in query_counts.items():
             score += min(count, title_tokens[token]) * 8
             score += min(count, content_tokens[token]) * 1.5
-            if token in item["title"].lower():
+            if title_tokens[token] or content_tokens[token]:
+                matched.add(token)
+            if token in tokenize(item["title"]):
                 score += 4
-        scored.append((score, item))
+        coverage = len(matched) / max(1, len(query_counts))
+        score += coverage * 30
+        if coverage == 1:
+            score += 25
+        if item.get("source") == "base-guide":
+            score += 8
+        if score > 0:
+            scored.append((score, item))
     scored.sort(key=lambda pair: (pair[0], pair[1]["updated_at"]), reverse=True)
+    if not scored:
+        return []
+    relevance_floor = max(1.0, scored[0][0] * 0.70)
     results = []
-    for score, item in scored[:limit]:
+    for score, item in (pair for pair in scored if pair[0] >= relevance_floor):
         item["score"] = round(score, 2)
-        item["snippet"] = compact_snippet(item["content"], tokens)
+        if item.get("source") == "base-guide":
+            item["snippet"] = item["content"][:1600].strip() + ("…" if len(item["content"]) > 1600 else "")
+        else:
+            item["snippet"] = compact_snippet(item["content"], tokens)
         results.append(item)
+        if len(results) >= limit:
+            break
     return results
 
 

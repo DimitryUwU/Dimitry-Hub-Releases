@@ -453,12 +453,37 @@ def seed_knowledge(db: sqlite3.Connection) -> None:
             "Actualización de la biblioteca",
             "El botón de actualización del editor descarga e indexa la fuente configurada. El botón de noticias consulta las publicaciones de Steam. Los paquetes ZIP permiten añadir dumps, tablas o guías propias.",
         ),
+        (
+            "palworld", "guia-inicial", "base-guide", "palworld-1.0-early-pals",
+            "Guía Palworld 1.0: mejores Pals iniciales",
+            "Guía comunitaria orientativa, revisada para Palworld 1.0 en julio de 2026. Cattiva es una opción inicial versátil: aumenta la capacidad de carga y trabaja en labores manuales, transporte, recolección y minería. Foxparks aporta combate temprano y encendido. Pengullet cubre riego, enfriamiento, transporte y labores manuales. Lamball ayuda en el rancho con materiales para armadura; Chikipi aporta alimento; Lifmunk cubre siembra, recolección, tala, labores manuales y medicina. La elección depende de si priorizas combate, base o movilidad. Fuente comunitaria: https://all.gg/news/best-early-game-pals-in-palworld-1-0/",
+        ),
+        (
+            "palworld", "pasivas-habilidades", "base-guide", "palworld-1.0-passives",
+            "Guía Palworld 1.0: mejores habilidades pasivas de Pals",
+            "Resumen comunitario orientativo para la versión 1.0 de julio de 2026. Para combate destacan Immortality, Legend, Diamond Body, Demon's Hand, Idiosyncratic y Eternal Engine. Para trabajo de base conviene revisar Ranch Master, Babysitter y Remarkable Craftsmanship; Artisan sigue siendo útil. Para movilidad aparecen Swift y Eternal Engine. No existe una única lista óptima: separa configuraciones de combate, montura, rancho y producción, y revisa los efectos dentro de tu versión del juego. Fuente comunitaria: https://allthings.how/palworld-1-0-best-passives-tier-list/",
+        ),
+        (
+            "palworld", "mapa-bases", "base-guide", "palworld-1.0-mining-bases",
+            "Guía Palworld 1.0: coordenadas de bases y minería",
+            "Estas son algunas de las mejores ubicaciones y coordenadas para una base de minería (también buscado como cordenadas o mineria). Confirma cada punto en el mapa de tu versión antes de construir. Mineral y carbón: 189, -38 en Verdant Brook. Azufre: -594, -525 cerca de la torre del volcán. Cuarzo puro: -212, 249 en Astral Mountain. Cromita y cuarzo Hexolite: -1172, -1225 en Feybreak. Soralite de la versión 1.0: 583, 144 en Sun Reach. Para una base general plana en contenido 1.0 se cita Crystal Pool en -540, -1361, con la precaución de un jefe cercano. Fuentes comunitarias: https://www.playerauctions.com/palworld-guide/tips-tricks/best-mining-base-spots/ y https://allthings.how/palworld-1-0-best-base-locations-with-coordinates/",
+        ),
+        (
+            "palworld", "objetos", "base-guide", "palworld-1.0-high-quality-pal-oil",
+            "Cómo conseguir aceite de Pal de alta calidad en Palworld 1.0",
+            "Métodos comunitarios revisados en julio de 2026: asigna un Dumud al rancho para una producción sostenida; Dumud Gild puede añadir monedas. Como alternativa rápida, Mammorest puede soltar entre 5 y 10 unidades al capturarlo o derrotarlo. También se vende por 300 monedas en comerciantes como Duneshelter y Fisherman's Point. Verifica precios y botín en tu versión antes de planificar una granja. Fuente comunitaria: https://dotesports.com/palworld/guides/how-to-get-high-quality-oil-in-palworld-1-0",
+        ),
     ]
     for domain, category, source, source_key, title, content in entries:
         db.execute(
             """
-            INSERT OR IGNORE INTO knowledge_entries(domain, category, source, source_key, title, content, metadata_json, updated_at)
+            INSERT INTO knowledge_entries(domain, category, source, source_key, title, content, metadata_json, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, '{}', ?)
+            ON CONFLICT(domain, source, source_key) DO UPDATE SET
+                category=excluded.category,
+                title=excluded.title,
+                content=excluded.content,
+                updated_at=excluded.updated_at
             """,
             (domain, category, source, source_key, title, content, now),
         )
