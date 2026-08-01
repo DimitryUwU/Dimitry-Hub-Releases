@@ -120,8 +120,8 @@ jobs:
               Start-Sleep -Milliseconds 500
             }
             if (-not $ready) { throw 'La aplicación instalada no respondió a tiempo.' }
-            $home = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8765/' -TimeoutSec 5
-            if ($home.Content -notmatch 'Dimitry Hub') { throw 'La página inicial instalada no contiene el contenido esperado.' }
+            $homeResponse = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8765/' -TimeoutSec 5
+            if ($homeResponse.Content -notmatch 'Dimitry Hub') { throw 'La página inicial instalada no contiene el contenido esperado.' }
             Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8765/api/system/shutdown' -TimeoutSec 5 | Out-Null
             Wait-Process -Id $appProcess.Id -Timeout 20 -ErrorAction SilentlyContinue
           } finally {
