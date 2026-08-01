@@ -1,6 +1,6 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "channel": "stable",
   "source_sha256": "9a343f22e8b1b5a8e2690f9cfc24d2614d4ee6596bea67e9ff2ad7429a0982e4",
-  "notes": "Corrige el inicio de Dimitry Hub instalado en Windows. La aplicación ahora incluye correctamente todos sus módulos, espera a que el servidor local esté listo antes de abrir el navegador y guarda un informe visible si ocurre un error de arranque."
+  "notes": "Corrige los avisos repetidos de Tema aplicado y Tipografía aplicada que aparecían al hacer clic en cualquier lugar de cualquier pestaña. Los controles de apariencia ahora solo responden a sus botones correspondientes y no vuelven a guardar una selección que ya estaba activa."
 }
