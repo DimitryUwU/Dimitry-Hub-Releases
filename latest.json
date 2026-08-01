@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.0.0/Dimitry_Hub_Setup_x64.exe",
-  "sha256": "5c3e0cdedb2a8a032f6a3d700d64c232072b9e387fe5f54ed204c1ef88d5b1f0",
-  "notes": "Primera versión completa de Dimitry Hub con interfaz Arcane Royal, temas Obsidian Gold y Midnight Modern, estudio, proyectos, Palworld, Game Modification, IA y actualizaciones automáticas verificadas.",
-  "published_at": "2026-08-01T03:00:39.4220005Z"
+  "version": "1.0.1",
+  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.0.1/Dimitry_Hub_Setup_x64.exe",
+  "sha256": "8b4ebd4e0d692b1eb5b1a4adf806c18021652e3a81462dfd0effda0d65fcc481",
+  "notes": "Corrige el inicio de Dimitry Hub instalado en Windows. La aplicación ahora incluye correctamente todos sus módulos, espera a que el servidor local esté listo antes de abrir el navegador y guarda un informe visible si ocurre un error de arranque.",
+  "published_at": "2026-08-01T03:16:29.6875142Z"
 }
