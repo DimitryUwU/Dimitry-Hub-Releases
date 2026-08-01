@@ -96,6 +96,62 @@ class ExtendedTests(unittest.TestCase):
         self.assertIn("Se aprobó el plan por unanimidad.", document)
         self.assertNotIn("POR TANTO", document)
 
+    def test_every_available_peruvian_legal_document_is_created(self):
+        from app.database import GENERATED_DIR
+        from app.main import LegalRequest, legal_create
+
+        kinds = (
+            "solicitud",
+            "carta_notarial",
+            "apersonamiento",
+            "reconsideracion",
+            "apelacion",
+            "denuncia",
+            "descargo",
+            "poder_simple",
+            "acta_reunion",
+        )
+        for kind in kinds:
+            with self.subTest(kind=kind):
+                fields = {
+                    "authority": "MUNICIPALIDAD DISTRITAL DE PRUEBA",
+                    "applicant": "María Elena Quispe Rojas",
+                    "address": "Jirón Los Andes 123, Abancay, Apurímac",
+                    "city_date": "Abancay, 1 de agosto de 2026",
+                    "sumilla": "Solicito evaluación del pedido documentado",
+                }
+                if kind == "acta_reunion":
+                    fields.update({"time": "10:00 a. m.", "participants": "María Elena Quispe Rojas\nJosé Luis Cáceres Soto"})
+                    request_text = "Revisión del pedido y de los documentos entregados."
+                    facts = "Las personas participantes revisaron los antecedentes y formularon observaciones."
+                    evidence = "Se acordó remitir las observaciones por escrito y conservar una copia del acta."
+                else:
+                    fields["dni"] = "12345678"
+                    if kind == "poder_simple":
+                        fields.update({"proxy_name": "José Luis Cáceres Soto", "proxy_dni": "87654321"})
+                    request_text = "Solicito que se evalúe el pedido conforme a los hechos y documentos que se acompañan."
+                    facts = "1. El 15 de julio de 2026 se presentó el documento indicado.\n2. Se conserva el cargo de recepción."
+                    evidence = "Anexo 1-A: copia del cargo de recepción."
+                result = legal_create(LegalRequest(
+                    kind=kind,
+                    fields=fields,
+                    facts=facts,
+                    legal_basis="",
+                    evidence=evidence,
+                    request_text=request_text,
+                    use_ai=False,
+                    verify_web=False,
+                ))
+                target = GENERATED_DIR / result["filename"]
+                self.assertTrue(target.is_file())
+                self.assertGreater(target.stat().st_size, 1000)
+                with zipfile.ZipFile(target) as zf:
+                    document = zf.read("word/document.xml").decode("utf-8")
+                self.assertIn("María Elena Quispe Rojas", document)
+                self.assertIn("Solicito evaluación del pedido documentado", document)
+                self.assertNotIn("[DNI PENDIENTE]", document)
+                self.assertNotIn("[NOMBRE COMPLETO PENDIENTE]", document)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -352,6 +352,10 @@ def create_legal_docx(kind: str, fields: dict, body: str) -> Path:
     doc = Document()
     _configure_legal_document(doc)
 
+    if normalized_kind in {"carta_notarial", "poder_simple"}:
+        heading = _add_legal_paragraph(doc, title, bold=True, alignment=WD_ALIGN_PARAGRAPH.CENTER)
+        heading.paragraph_format.space_after = Pt(12)
+
     expediente = fields.get("expediente", "")
     sumilla = fields.get("sumilla", title.title())
     authority = fields.get("authority", "SEÑOR/A [AUTORIDAD O ENTIDAD]")
@@ -360,6 +364,9 @@ def create_legal_docx(kind: str, fields: dict, body: str) -> Path:
     dni = dni_value if len(dni_value) == 8 else "[DNI PENDIENTE]"
     address = fields.get("address", "[DOMICILIO]")
     email = fields.get("email", "")
+    proxy_name = str(fields.get("proxy_name") or "").strip()
+    proxy_dni_value = re.sub(r"\D", "", str(fields.get("proxy_dni") or ""))
+    proxy_dni = proxy_dni_value if len(proxy_dni_value) == 8 else "[DNI DE LA PERSONA APODERADA PENDIENTE]"
 
     if expediente:
         p = doc.add_paragraph()
@@ -378,7 +385,12 @@ def create_legal_docx(kind: str, fields: dict, body: str) -> Path:
     identity = f"{applicant}, con DNI N.° {dni}, con domicilio en {address}"
     if email:
         identity += f", correo electrónico {email}"
-    identity += ", ante usted me presento y digo:"
+    if normalized_kind == "poder_simple":
+        identity += f", otorgo poder simple a favor de {proxy_name or '[NOMBRE DE LA PERSONA APODERADA PENDIENTE]'}, con DNI N.° {proxy_dni}, en los términos siguientes:"
+    elif normalized_kind == "carta_notarial":
+        identity += ", por medio de la presente carta notarial le comunico y requiero lo siguiente:"
+    else:
+        identity += ", ante usted me presento y digo:"
     p = doc.add_paragraph(identity)
     p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p.paragraph_format.first_line_indent = Inches(0.5)
@@ -394,25 +406,37 @@ def create_legal_docx(kind: str, fields: dict, body: str) -> Path:
             p.paragraph_format.first_line_indent = Inches(0.5)
             p.paragraph_format.line_spacing = 1.5
 
+    closings = {
+        "carta_notarial": ("EN CONSECUENCIA:", "Solicito atender el requerimiento comunicado en los términos expuestos y dejar constancia de su recepción."),
+        "poder_simple": ("VIGENCIA Y ALCANCE:", "El poder se limita a las facultades expresamente señaladas en este documento y puede ser revocado por la persona otorgante."),
+        "denuncia": ("POR TANTO:", "Solicito admitir la denuncia, evaluar los hechos y documentos aportados y disponer las actuaciones que correspondan dentro de su competencia."),
+        "apelacion": ("POR TANTO:", "Solicito admitir el recurso y elevar lo actuado al superior jerárquico para que resuelva conforme a los agravios, pruebas y fundamentos expuestos."),
+        "reconsideracion": ("POR TANTO:", "Solicito admitir el recurso y volver a evaluar el acto impugnado conforme a los hechos, pruebas y fundamentos expuestos."),
+    }
+    closing_heading, closing_text = closings.get(normalized_kind, ("POR TANTO:", "A usted solicito admitir el presente escrito y resolver conforme a los hechos, documentos y fundamentos aplicables."))
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    run = p.add_run("POR TANTO:")
+    run = p.add_run(closing_heading)
     _set_run_font(run, name="Arial", size=Pt(11), bold=True)
-    p = doc.add_paragraph("A usted solicito admitir el presente escrito y resolver conforme a los hechos, documentos y fundamentos aplicables.")
+    p = doc.add_paragraph(closing_text)
     p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p.paragraph_format.first_line_indent = Inches(0.5)
 
     city_date = fields.get("city_date", "Abancay, [FECHA]")
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    p.add_run(city_date)
+    p.paragraph_format.keep_with_next = True
+    city_run = p.add_run(city_date)
+    _set_run_font(city_run, name="Arial", size=Pt(11))
 
-    for _ in range(3):
-        doc.add_paragraph()
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.add_run("__________________________________\n")
-    p.add_run(applicant)
+    p.paragraph_format.space_before = Pt(42)
+    p.paragraph_format.keep_together = True
+    signature_line = p.add_run("__________________________________\n")
+    _set_run_font(signature_line, name="Arial", size=Pt(11))
+    signature_name = p.add_run(f"{applicant}\nDNI N.° {dni}")
+    _set_run_font(signature_name, name="Arial", size=Pt(11))
 
     target = GENERATED_DIR / safe_filename(f"{title}-{utc_now().replace(':', '-')}.docx")
     target.parent.mkdir(parents=True, exist_ok=True)

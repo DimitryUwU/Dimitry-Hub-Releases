@@ -12,7 +12,38 @@ def extract_text(path: Path) -> str:
             from docx import Document
 
             doc = Document(str(path))
-            return "\n".join(paragraph.text for paragraph in doc.paragraphs)
+            blocks = [paragraph.text.strip() for paragraph in doc.paragraphs if paragraph.text.strip()]
+            for table in doc.tables:
+                for row in table.rows:
+                    values = [cell.text.strip().replace("\n", " ") for cell in row.cells]
+                    if any(values):
+                        blocks.append(" | ".join(values))
+            return "\n\n".join(blocks)
+        if suffix == ".pptx":
+            from pptx import Presentation
+
+            presentation = Presentation(str(path))
+            blocks: list[str] = []
+            for index, slide in enumerate(presentation.slides, start=1):
+                slide_blocks = [f"DIAPOSITIVA {index}"]
+                for shape in slide.shapes:
+                    if getattr(shape, "has_text_frame", False):
+                        text = "\n".join(paragraph.text.strip() for paragraph in shape.text_frame.paragraphs if paragraph.text.strip())
+                        if text:
+                            slide_blocks.append(text)
+                    if getattr(shape, "has_table", False):
+                        for row in shape.table.rows:
+                            values = [cell.text.strip().replace("\n", " ") for cell in row.cells]
+                            if any(values):
+                                slide_blocks.append(" | ".join(values))
+                try:
+                    notes = slide.notes_slide.notes_text_frame.text.strip()
+                    if notes:
+                        slide_blocks.append("NOTAS DEL EXPOSITOR\n" + notes)
+                except (AttributeError, ValueError):
+                    pass
+                blocks.append("\n".join(slide_blocks))
+            return "\n\n".join(blocks)
         if suffix == ".pdf":
             from pypdf import PdfReader
 

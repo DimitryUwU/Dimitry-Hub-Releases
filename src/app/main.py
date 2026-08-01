@@ -49,8 +49,10 @@ from .database import (
 from .documents import create_legal_docx, create_monograph_docx
 from .extractors import extract_text
 from .knowledge import import_bundle, search_knowledge, source_summary, upsert_entry
+from .lua_tools import analyze_lua_source, generate_gameguardian_script
 from .research import bibliography_audit, crossref_doi, crossref_search, import_web_source, list_research_items, save_research_item, suggest_academic_sources
 from .sync_engine import auto_sync_due, run_full_sync, sync_status
+from .study_tools import generate_study_material
 from .secrets import delete_secret, set_secret
 from .version import APP_VERSION
 from .app_updates import check_now as check_app_update, install_available_update, startup_auto_update, status as app_update_status
@@ -170,6 +172,13 @@ class LegalRequest(BaseModel):
     request_text: str = Field(default="", max_length=50000)
     use_ai: bool = True
     verify_web: bool = False
+
+
+class LuaGenerateRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    author: str = Field(default="", max_length=120)
+    description: str = Field(default="", max_length=1000)
+    changes: str = Field(min_length=1, max_length=100000)
 
 
 class WebImportRequest(BaseModel):
@@ -418,6 +427,9 @@ async def extract_upload(upload: UploadFile = File(...)) -> dict:
     if len(content) > 100 * 1024 * 1024:
         raise HTTPException(413, "El archivo supera el límite de 100 MB")
     suffix = Path(upload.filename or "archivo.txt").suffix
+    supported = {".pdf", ".docx", ".pptx", ".txt", ".md"}
+    if suffix.lower() not in supported:
+        raise HTTPException(400, "Formato no admitido. Usa PDF, DOCX, PPTX, TXT o MD.")
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(content)
         path = Path(tmp.name)
@@ -425,6 +437,10 @@ async def extract_upload(upload: UploadFile = File(...)) -> dict:
         text = extract_text(path)
     finally:
         path.unlink(missing_ok=True)
+    if not text.strip():
+        raise HTTPException(422, "No se encontró texto extraíble. Si el archivo contiene imágenes escaneadas, conviértelas primero con reconocimiento de texto.")
+    if text.startswith("[No se pudo extraer el texto:"):
+        raise HTTPException(422, text.strip("[]"))
     return {"name": upload.filename, "text": text[:250000]}
 
 
@@ -776,6 +792,10 @@ def study_generate(payload: StudyRequest) -> dict:
         "cards": "Crea tarjetas de memoria en formato Pregunta | Respuesta, sin omitir conceptos importantes.",
         "outline": "Ordena el material como un libro de estudio con títulos, subtítulos, cuadros y conexiones entre conceptos.",
     }
+    try:
+        baseline = generate_study_material(payload.kind, payload.content)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
     instruction = templates.get(payload.kind, templates["ficha"])
     context = ""
     if payload.project_id:
@@ -794,13 +814,25 @@ Contexto del proyecto:
 Contenido principal:
 {payload.content}
 """
-    result = _ai_call(
-        prompt,
-        system="Eres un tutor académico riguroso, claro y orientado a exámenes.",
-        purpose="study",
-        allow_web=payload.use_web,
-    )
-    return result
+    try:
+        result = _ai_call(
+            prompt,
+            system="Eres un tutor académico riguroso, claro y orientado a exámenes. Conserva la fidelidad al material proporcionado y separa con claridad temas, conceptos y preguntas de repaso.",
+            purpose="study",
+            allow_web=payload.use_web,
+        )
+        if not result.get("response", "").strip():
+            raise HTTPException(503, "La IA no devolvió contenido")
+        result.update({"word_count": baseline["word_count"], "section_count": baseline["section_count"], "kind": baseline["kind"]})
+        return result
+    except HTTPException as exc:
+        return {
+            **baseline,
+            "provider": "local",
+            "model": "generador estructurado sin conexión",
+            "sources": [],
+            "warning": f"Se utilizó el generador local porque la IA no estaba disponible: {exc.detail}",
+        }
 
 
 def _deterministic_monograph_structure(content: str) -> str:
@@ -910,6 +942,14 @@ def legal_create(payload: LegalRequest) -> dict:
             missing.append("petitorio")
         if not payload.facts.strip():
             missing.append("fundamentos de hecho")
+        if kind == "poder_simple":
+            proxy_dni = re.sub(r"\D", "", fields.get("proxy_dni", ""))
+            if not fields.get("proxy_name"):
+                missing.append("nombre de la persona apoderada")
+            if len(proxy_dni) != 8:
+                missing.append("DNI de ocho dígitos de la persona apoderada")
+            else:
+                fields["proxy_dni"] = proxy_dni
     if missing:
         raise HTTPException(422, "Completa antes de generar: " + ", ".join(missing) + ".")
 
@@ -920,6 +960,27 @@ def legal_create(payload: LegalRequest) -> dict:
             ("ACUERDOS", payload.evidence),
             ("BASE LEGAL O DOCUMENTAL", payload.legal_basis),
         ]
+    elif kind == "carta_notarial":
+        parts = [
+            ("REQUERIMIENTO", payload.request_text),
+            ("ANTECEDENTES", payload.facts),
+            ("FUNDAMENTO", payload.legal_basis),
+            ("DOCUMENTOS QUE SE ACOMPAÑAN", payload.evidence),
+        ]
+    elif kind == "poder_simple":
+        parts = [
+            ("ALCANCE DEL PODER", payload.request_text),
+            ("FACULTADES OTORGADAS", payload.facts),
+            ("BASE LEGAL O DOCUMENTAL", payload.legal_basis),
+            ("DOCUMENTOS QUE SE ACOMPAÑAN", payload.evidence),
+        ]
+    elif kind == "denuncia":
+        parts = [
+            ("OBJETO DE LA DENUNCIA", payload.request_text),
+            ("FUNDAMENTOS DE HECHO", payload.facts),
+            ("FUNDAMENTOS DE DERECHO", payload.legal_basis),
+            ("MEDIOS PROBATORIOS Y ANEXOS", payload.evidence),
+        ]
     else:
         parts = [
             ("PETITORIO", payload.request_text),
@@ -928,6 +989,7 @@ def legal_create(payload: LegalRequest) -> dict:
             ("MEDIOS PROBATORIOS Y ANEXOS", payload.evidence),
         ]
     populated_parts = [(heading, content.strip()) for heading, content in parts if content.strip()]
+    expected_sections = ", ".join(heading.title() for heading, _ in populated_parts)
     roman = ("I", "II", "III", "IV")
     draft = "\n".join(
         item
@@ -943,8 +1005,7 @@ Reglas estrictas:
 - Usa únicamente los hechos, petitorio, normas y pruebas proporcionados.
 - No inventes artículos, jurisprudencia, plazos, competencias ni datos personales.
 - Omite cualquier sección opcional que no tenga contenido; no insertes instrucciones ni marcadores internos.
-- En un acta, devuelve únicamente Agenda, Desarrollo de la reunión, Acuerdos y la base legal o documental cuando exista.
-- En los demás escritos, devuelve únicamente Petitorio, Fundamentos de hecho, Fundamentos de derecho y Medios probatorios/anexos cuando correspondan.
+- Conserva estas secciones y no añadas otras: {expected_sections}.
 - Tono formal, claro y directo.
 - Este es un borrador para revisión profesional.
 
@@ -992,6 +1053,40 @@ def download_generated(filename: str) -> FileResponse:
     if not target.exists():
         raise HTTPException(404, "Documento generado no encontrado")
     return FileResponse(target, filename=target.name)
+
+
+@app.post("/api/gamemod/lua/analyze")
+async def gamemod_lua_analyze(upload: UploadFile = File(...)) -> dict:
+    if not upload.filename or Path(upload.filename).suffix.lower() != ".lua":
+        raise HTTPException(400, "Selecciona un archivo con extensión .lua")
+    content = await upload.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(413, "El archivo Lua supera el límite de 5 MB")
+    try:
+        source = content.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        source = content.decode("latin-1")
+    try:
+        return analyze_lua_source(source, safe_filename(upload.filename))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+
+@app.post("/api/gamemod/lua/generate")
+def gamemod_lua_generate(payload: LuaGenerateRequest) -> dict:
+    try:
+        script = generate_gameguardian_script(payload.name, payload.author, payload.description, payload.changes)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
+    base_name = safe_filename(Path(payload.name).stem).strip(" .") or "script-gameguardian"
+    target = GENERATED_DIR / safe_filename(f"{base_name}-{utc_now().replace(':', '-')}.lua")
+    atomic_write_bytes(target, script.encode("utf-8"))
+    return {
+        "filename": target.name,
+        "download_url": f"/api/generated/{target.name}",
+        "preview": script,
+        "actions": len([line for line in payload.changes.splitlines() if line.strip() and not line.lstrip().startswith(("#", "--"))]),
+    }
 
 
 @app.get("/api/knowledge/{domain}/summary")
