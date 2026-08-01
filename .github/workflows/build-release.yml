@@ -34,7 +34,7 @@ jobs:
           "version=$($config.version)" >> $env:GITHUB_OUTPUT
           "tag=v$($config.version)" >> $env:GITHUB_OUTPUT
 
-      - name: Verify, extract and patch source archive
+      - name: Verify and extract source archive
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -44,18 +44,12 @@ jobs:
           $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
           $expected = $config.source_sha256.ToLowerInvariant()
           if ($actual -ne $expected) { throw "SHA-256 incorrecto. Esperado: $expected. Obtenido: $actual" }
-
           Remove-Item build -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force build/src | Out-Null
           Expand-Archive $archive build/src -Force
-
           if (Test-Path 'patches/current') {
             Copy-Item 'patches/current/*' 'build/src' -Recurse -Force
           }
-          if (Test-Path 'patches/apply.ps1') {
-            & 'patches/apply.ps1' -Root 'build/src'
-          }
-
           @"
           APP_VERSION = "$($config.version)"
           APP_NAME = "Dimitry Hub"
@@ -71,6 +65,10 @@ jobs:
           cache: pip
           cache-dependency-path: build/src/requirements.txt
 
+      - name: Apply product fixes
+        shell: pwsh
+        run: python patches/apply.py build/src
+
       - name: Install build dependencies
         shell: pwsh
         run: |
@@ -84,6 +82,7 @@ jobs:
         run: |
           python -m compileall app run.py updater.py
           python -m unittest discover -s tests -p 'test_*.py'
+          node --check app/static/app.js
 
       - name: Build Windows executables
         shell: pwsh
