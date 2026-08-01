@@ -398,6 +398,7 @@ def create_legal_docx(kind: str, fields: dict, body: str) -> Path:
     sections = _split_legal_sections(body)
     for heading, content in sections:
         p = doc.add_paragraph()
+        p.paragraph_format.keep_with_next = True
         run = p.add_run(heading.upper())
         _set_run_font(run, name="Arial", size=Pt(11), bold=True)
         for paragraph in content:
@@ -416,6 +417,7 @@ def create_legal_docx(kind: str, fields: dict, body: str) -> Path:
     closing_heading, closing_text = closings.get(normalized_kind, ("POR TANTO:", "A usted solicito admitir el presente escrito y resolver conforme a los hechos, documentos y fundamentos aplicables."))
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.keep_with_next = True
     run = p.add_run(closing_heading)
     _set_run_font(run, name="Arial", size=Pt(11), bold=True)
     p = doc.add_paragraph(closing_text)

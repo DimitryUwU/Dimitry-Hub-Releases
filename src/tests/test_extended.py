@@ -4,6 +4,7 @@ import os
 import tempfile
 import unittest
 import zipfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
@@ -70,6 +71,14 @@ class ExtendedTests(unittest.TestCase):
         self.assertIn("12345678", document)
         self.assertIn("1. Hecho comprobado.", document)
         self.assertNotIn("[DNI PENDIENTE]", document)
+        root = ET.fromstring(document)
+        ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+        paragraphs = {
+            "".join(node.text or "" for node in paragraph.findall(".//w:t", ns)): paragraph
+            for paragraph in root.findall(".//w:body/w:p", ns)
+        }
+        for heading in ("I. PETITORIO", "II. FUNDAMENTOS DE HECHO", "POR TANTO:"):
+            self.assertIsNotNone(paragraphs[heading].find("w:pPr/w:keepNext", ns))
 
     def test_peruvian_minutes_use_a_specific_structure(self):
         from app.documents import create_legal_docx
