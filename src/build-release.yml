@@ -1,0 +1,124 @@
+name: Build and publish Dimitry Hub
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'payload/**'
+      - '.github/workflows/build-release.yml'
+      - 'release-config.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read release configuration
+        id: config
+        shell: pwsh
+        run: |
+          $config = Get-Content release-config.json -Raw | ConvertFrom-Json
+          "version=$($config.version)" >> $env:GITHUB_OUTPUT
+          "tag=v$($config.version)" >> $env:GITHUB_OUTPUT
+          "notes=$($config.notes)" >> $env:GITHUB_OUTPUT
+
+      - name: Restore source archive
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force build | Out-Null
+          $parts = Get-ChildItem payload -Filter '*.b64' | Sort-Object Name
+          $base64 = ($parts | ForEach-Object { Get-Content $_.FullName -Raw }) -join ''
+          [IO.File]::WriteAllBytes('build\source.zip', [Convert]::FromBase64String($base64))
+          Expand-Archive build\source.zip build\src -Force
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: build/src/requirements.txt
+
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r build/src/requirements.txt
+          pip install pyinstaller
+
+      - name: Test Python sources
+        shell: pwsh
+        working-directory: build/src
+        run: |
+          python -m compileall app run.py updater.py
+          python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Build executables
+        shell: pwsh
+        working-directory: build/src
+        run: |
+          pyinstaller --noconfirm --clean --onefile --windowed --name DimitryHub --icon dimitry_hub.ico --add-data "app/static;app/static" --hidden-import uvicorn.logging --hidden-import uvicorn.loops.auto --hidden-import uvicorn.protocols.http.auto --hidden-import uvicorn.protocols.websockets.auto --hidden-import uvicorn.lifespan.on run.py
+          pyinstaller --noconfirm --clean --onefile --windowed --name DimitryHubUpdater updater.py
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      - name: Build installer
+        shell: pwsh
+        working-directory: build/src
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' "/DMyAppVersion=${{ steps.config.outputs.version }}" installer.iss
+
+      - name: Calculate SHA-256 and manifest
+        id: hash
+        shell: pwsh
+        working-directory: build/src
+        run: |
+          $installer = Resolve-Path 'release\Dimitry_Hub_Setup_x64.exe'
+          $sha = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLower()
+          "sha256=$sha" >> $env:GITHUB_OUTPUT
+          $manifest = [ordered]@{
+            version = '${{ steps.config.outputs.version }}'
+            installer_url = "https://github.com/${{ github.repository }}/releases/download/${{ steps.config.outputs.tag }}/Dimitry_Hub_Setup_x64.exe"
+            sha256 = $sha
+            notes = '${{ steps.config.outputs.notes }}'
+            published_at = (Get-Date).ToUniversalTime().ToString('o')
+          }
+          $manifest | ConvertTo-Json -Depth 4 | Set-Content latest.json -Encoding UTF8
+          "$sha  Dimitry_Hub_Setup_x64.exe" | Set-Content checksums.sha256 -Encoding ASCII
+
+      - name: Publish GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = '${{ steps.config.outputs.tag }}'
+          gh release delete $tag --yes --cleanup-tag 2>$null
+          gh release create $tag build/src/release/Dimitry_Hub_Setup_x64.exe build/src/checksums.sha256 build/src/latest.json --title "Dimitry Hub $tag" --notes '${{ steps.config.outputs.notes }}' --latest
+
+      - name: Update latest manifest in repository
+        shell: pwsh
+        run: |
+          Copy-Item build/src/latest.json latest.json -Force
+          Copy-Item build/src/checksums.sha256 checksums.sha256 -Force
+          git config user.name 'Dimitry Hub Release Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add latest.json checksums.sha256
+          git commit -m "Update latest manifest to v${{ steps.config.outputs.version }} [skip ci]" || exit 0
+          git push
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dimitry-Hub-${{ steps.config.outputs.version }}
+          path: |
+            build/src/release/Dimitry_Hub_Setup_x64.exe
+            build/src/latest.json
+            build/src/checksums.sha256

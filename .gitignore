@@ -1,0 +1,10 @@
+build/
+evidencia-pruebas/
+server-src.pid
+dist/
+*.spec
+__pycache__/
+*.pyc
+.pytest_cache/
+test-results/
+playwright-report/

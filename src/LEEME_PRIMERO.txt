@@ -1,0 +1,22 @@
+DIMITRY HUB 0.5
+
+SI YA TIENES DIMITRY HUB
+Usa el paquete de actualización v0.5. Cierra el programa, ejecuta
+INSTALAR_ACTUALIZACION.vbs y selecciona la carpeta que contiene run.py,
+app y data. Tus proyectos y archivos se conservarán.
+
+INSTALACIÓN NUEVA
+1. Instala Python 3.11 o superior y marca Add Python to PATH.
+2. Ejecuta INSTALAR_Y_ABRIR.bat una sola vez.
+3. Ejecuta CREAR_ACCESO_DIRECTO.bat.
+4. Usa el acceso Dimitry Hub del escritorio.
+
+INTELIGENCIA
+En Ajustes puedes conectar OpenAI API, Ollama o un proveedor compatible.
+El perfil Máxima utiliza GPT-5.6 cuando ese modelo está disponible en tu
+cuenta API. ChatGPT Plus y la API son servicios separados.
+
+ACTUALIZACIONES
+La aplicación puede revisar Steam y GitHub al abrir, descargar la base
+técnica del editor Palworld y señalar claves nuevas, modificadas o retiradas.
+Nunca modifica automáticamente tus saves personales.

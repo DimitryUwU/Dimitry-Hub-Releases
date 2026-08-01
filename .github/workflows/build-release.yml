@@ -1,14 +1,19 @@
-name: Build and publish Dimitry Hub
+name: Validar y compilar Dimitry Hub
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
-      - "source/**"
-      - "patches/**"
+      - "src/**"
       - ".github/workflows/build-release.yml"
-      - "release-config.json"
   workflow_dispatch:
+    inputs:
+      publicar:
+        description: "Escribe PUBLICAR para crear una versión oficial"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -18,38 +23,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-release:
+  validar-y-compilar:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Read release configuration
+      - name: Leer configuración
         id: config
         shell: pwsh
         run: |
           $config = Get-Content release-config.json -Raw | ConvertFrom-Json
           if (-not $config.version) { throw 'Falta version en release-config.json.' }
-          if (-not $config.source_sha256) { throw 'Falta source_sha256 en release-config.json.' }
           "version=$($config.version)" >> $env:GITHUB_OUTPUT
           "tag=v$($config.version)" >> $env:GITHUB_OUTPUT
 
-      - name: Verify and extract source archive
+      - name: Preparar código fuente legible
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $archive = 'source/Dimitry_Hub_Source_v1.0.0.zip'
-          if (-not (Test-Path $archive)) { throw "Falta $archive" }
-          $config = Get-Content release-config.json -Raw | ConvertFrom-Json
-          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
-          $expected = $config.source_sha256.ToLowerInvariant()
-          if ($actual -ne $expected) { throw "SHA-256 incorrecto. Esperado: $expected. Obtenido: $actual" }
-          Remove-Item build -Recurse -Force -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force build/src | Out-Null
-          Expand-Archive $archive build/src -Force
-          if (Test-Path 'patches/current') {
-            Copy-Item 'patches/current/*' 'build/src' -Recurse -Force
-          }
+          if (-not (Test-Path 'src/app/main.py')) { throw 'Falta el árbol src.' }
+          New-Item -ItemType Directory -Force build | Out-Null
+          Copy-Item src build/src -Recurse -Force
           @"
           APP_VERSION = "$($config.version)"
           APP_NAME = "Dimitry Hub"
@@ -64,13 +59,6 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: build/src/requirements.txt
-
-      - name: Apply product fixes
-        shell: pwsh
-        run: |
-          python patches/apply.py build/src
-          python patches/apply_v104.py build/src
-          python patches/apply_v110.py build/src
 
       - name: Install build dependencies
         shell: pwsh
@@ -131,6 +119,7 @@ jobs:
           $config.notes | Set-Content release-notes.txt -Encoding utf8
 
       - name: Publish GitHub release
+        if: github.event_name == 'workflow_dispatch' && inputs.publicar == 'PUBLICAR'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -141,6 +130,7 @@ jobs:
           gh release create $env:RELEASE_TAG build/src/release/Dimitry_Hub_Setup_x64.exe build/src/checksums.sha256 build/src/latest.json --title "Dimitry Hub $env:RELEASE_TAG" --notes-file build/src/release-notes.txt --latest
 
       - name: Publish latest manifest on main
+        if: github.event_name == 'workflow_dispatch' && inputs.publicar == 'PUBLICAR'
         shell: pwsh
         run: |
           Copy-Item build/src/latest.json latest.json -Force
