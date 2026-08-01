@@ -478,6 +478,11 @@ def seed_knowledge(db: sqlite3.Connection) -> None:
             "Cómo conseguir aceite de Pal de alta calidad en Palworld 1.0",
             "Métodos comunitarios revisados en julio de 2026: asigna un Dumud al rancho para una producción sostenida; Dumud Gild puede añadir monedas. Como alternativa rápida, Mammorest puede soltar entre 5 y 10 unidades al capturarlo o derrotarlo. También se vende por 300 monedas en comerciantes como Duneshelter y Fisherman's Point. Verifica precios y botín en tu versión antes de planificar una granja. Fuente comunitaria: https://dotesports.com/palworld/guides/how-to-get-high-quality-oil-in-palworld-1-0",
         ),
+        (
+            "palworld", "objetos", "base-guide", "palworld-1.0-electric-organ",
+            "Cómo conseguir órgano eléctrico en Palworld 1.0",
+            "El Órgano eléctrico (Electric Organ, código interno ElectricOrgan; también buscado como organo electrico) sí existe y es un material obtenido de Pals de tipo Rayo. Para conseguirlo pronto captura o derrota Pals eléctricos: Sparkit entrega 1–2, Jolthog y Univolt entregan 1, y otros Pals de Rayo también pueden soltarlo. También puede comprarse por 200 monedas al Caravan Leader o a comerciantes ambulantes de incidentes. En Palworld 1.0 la comunidad también documenta producción en rancho con Sparkit, pero conviene confirmarla en la versión instalada. Fuentes de datos actuales consultadas en agosto de 2026: https://paldb.cc/en/Electric_Organ y https://palworld.wiki.gg/wiki/Electric_Organ",
+        ),
     ]
     for domain, category, source, source_key, title, content in entries:
         db.execute(

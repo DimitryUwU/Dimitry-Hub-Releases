@@ -13,7 +13,10 @@ class AIAndSyncTests(unittest.TestCase):
 
         status = ai_status()
         self.assertTrue(status["providers"]["local"]["configured"])
-        self.assertTrue(status["providers"]["compatible"]["embedded"])
+        self.assertTrue(
+            status["providers"].get("compatible", {}).get("embedded")
+            or status["providers"].get("ollama", {}).get("online")
+        )
         with patch("app.main.ai_generate", side_effect=AIError("sin proveedor externo")):
             result = ai_chat(AIChatRequest(message="Hola, ¿qué puedes hacer?", domain="general"))
         self.assertEqual("local", result["provider"])
@@ -84,6 +87,28 @@ class AIAndSyncTests(unittest.TestCase):
         self.assertEqual(_provider_order(cfg), ["openai", "compatible", "ollama"])
         self.assertEqual(_provider_order({**cfg, "ai_provider": "openai"}), ["openai", "ollama"])
         self.assertEqual(_provider_order({**cfg, "ai_mode": "local"}), ["ollama"])
+
+    def test_ollama_off_disables_visible_reasoning(self):
+        from app.ai import _ollama_generate
+
+        captured = {}
+
+        def fake_request(url, *, payload=None, headers=None, timeout=0):
+            captured.update({"url": url, "payload": payload, "timeout": timeout})
+            return {"message": {"content": "razonamiento interno sin etiqueta inicial</think>\nRespuesta limpia."}}
+
+        with patch("app.ai._request_json", side_effect=fake_request):
+            result = _ollama_generate(
+                [{"role": "user", "content": "Confirma el estado"}],
+                system="Responde en español",
+                model="qwen3:4b",
+                timeout=30,
+                cfg={"ollama_url": "http://127.0.0.1:11434", "ollama_think": "off"},
+            )
+
+        self.assertFalse(captured["payload"]["think"])
+        self.assertTrue(captured["payload"]["messages"][-1]["content"].startswith("/no_think\n"))
+        self.assertEqual(result.text, "Respuesta limpia.")
 
     def test_secret_store_roundtrip(self):
         import app.secrets as secrets

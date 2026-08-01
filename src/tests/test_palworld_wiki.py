@@ -15,6 +15,7 @@ class PalworldWikiTests(unittest.TestCase):
             "Lista completa de las mejores habilidades pasivas de Pals": "palworld-1.0-passives",
             "Coordenadas de las mejores ubicaciones para una base de minería": "palworld-1.0-mining-bases",
             "¿Cómo conseguir aceite de Pal de alta calidad?": "palworld-1.0-high-quality-pal-oil",
+            "¿Cómo conseguir un órgano eléctrico?": "palworld-1.0-electric-organ",
             "¿Cómo creo un Pal perfecto macho y hembra manteniendo nivel 1, trabajo predeterminado y cuatro pasivas?": "palworld-perfect-pal-profile",
         }
         for question, expected_key in cases.items():
