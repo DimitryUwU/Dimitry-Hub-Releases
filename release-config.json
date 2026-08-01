@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+  "channel": "stable",
   "source_sha256": "9a343f22e8b1b5a8e2690f9cfc24d2614d4ee6596bea67e9ff2ad7429a0982e4",
   "notes": "Primera versión completa de Dimitry Hub con interfaz Arcane Royal, temas Obsidian Gold y Midnight Modern, estudio, proyectos, Palworld, Game Modification, IA y actualizaciones automáticas verificadas."
 }
