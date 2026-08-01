@@ -1,6 +1,13 @@
 name: Build and publish Dimitry Hub
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "source/**"
+      - "patches/**"
+      - ".github/workflows/build-release.yml"
+      - "release-config.json"
   workflow_dispatch:
 
 permissions:
