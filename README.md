@@ -1,18 +1,23 @@
 # Dimitry Hub — canal oficial de versiones
 
-Este repositorio publica el instalador oficial de **Dimitry Hub para Windows** y los archivos que permiten que la aplicación se mantenga actualizada.
+Este repositorio publica el instalador oficial de Dimitry Hub para Windows y los archivos necesarios para mantener la aplicación actualizada.
 
-## Cómo funciona
+## Funcionamiento
 
 - Se instala una sola vez con `Dimitry_Hub_Setup_x64.exe`.
 - Al abrirse, Dimitry Hub consulta `latest.json`.
-- Cuando existe una versión más reciente, descarga el instalador oficial, verifica su huella SHA-256 y realiza la actualización.
-- Los proyectos, documentos y ajustes personales se guardan fuera de la carpeta del programa, en `%LOCALAPPDATA%\Dimitry Hub\Data`, para conservarlos durante las actualizaciones o reinstalaciones.
+- Si existe una versión más reciente, descarga el instalador oficial y verifica su SHA-256.
+- Los proyectos, documentos y ajustes personales se conservan en `%LOCALAPPDATA%\Dimitry Hub\Data`.
+- El mismo instalador sirve para una instalación nueva o para actualizar una existente.
 
-## Archivos publicados
+## Publicación
 
-- `Dimitry_Hub_Setup_x64.exe`: instalador completo para una instalación nueva o una actualización.
-- `latest.json`: manifiesto usado por la actualización automática.
-- `checksums.sha256`: huella de integridad del instalador.
+GitHub Actions compila el programa en Windows, genera el instalador, crea la publicación de GitHub y actualiza automáticamente:
 
-Las versiones terminadas se encuentran en la sección **Releases** del repositorio.
+- `Dimitry_Hub_Setup_x64.exe`
+- `latest.json`
+- `checksums.sha256`
+
+El código fuente verificado de la versión 1.0.0 se almacena en:
+
+`source/Dimitry_Hub_Source_v1.0.0.zip`
