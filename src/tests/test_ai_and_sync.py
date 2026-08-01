@@ -7,6 +7,19 @@ from unittest.mock import patch
 
 
 class AIAndSyncTests(unittest.TestCase):
+    def test_embedded_ai_keeps_assistant_available_without_credentials(self):
+        from app.ai import AIError
+        from app.main import AIChatRequest, ai_chat, ai_status
+
+        status = ai_status()
+        self.assertTrue(status["providers"]["local"]["configured"])
+        self.assertTrue(status["providers"]["compatible"]["embedded"])
+        with patch("app.main.ai_generate", side_effect=AIError("sin proveedor externo")):
+            result = ai_chat(AIChatRequest(message="Hola, ¿qué puedes hacer?", domain="general"))
+        self.assertEqual("local", result["provider"])
+        self.assertIn("motor local integrado", result["response"])
+        self.assertGreater(result["thread_id"], 0)
+
     def test_openai_response_text_and_sources(self):
         from app.ai import _extract_openai_text
 

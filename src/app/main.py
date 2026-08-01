@@ -571,7 +571,26 @@ def update_settings(payload: SettingsIn) -> dict:
 
 @app.get("/api/ai/status")
 def ai_status() -> dict:
-    return ai_provider_status()
+    status = ai_provider_status()
+    providers = status.setdefault("providers", {})
+    external_ready = bool(
+        providers.get("openai", {}).get("configured")
+        or providers.get("ollama", {}).get("online")
+        or providers.get("compatible", {}).get("configured")
+    )
+    providers["local"] = {
+        "configured": True,
+        "online": True,
+        "model": "Dimitry local estructurado",
+        "web_search": False,
+    }
+    if not external_ready:
+        # Mantiene habilitada la interfaz existente mientras se incorpora la tarjeta
+        # visual del motor integrado en una versión posterior.
+        compatible = providers.setdefault("compatible", {})
+        compatible.update({"configured": True, "embedded": True, "model": "Dimitry local estructurado", "web_search": False})
+        status["mode"] = "local integrado"
+    return status
 
 
 @app.post("/api/ai/secret")
@@ -709,7 +728,25 @@ Usa la biblioteca cuando sea relevante, menciona el título de cada fuente local
             history=history,
         )
     except AIError as exc:
-        raise HTTPException(503, str(exc)) from exc
+        response = _embedded_assistant_answer(payload.domain, payload.message, local_results)
+        sources = [
+            {"title": item["title"], "url": "", "kind": "local", "category": item.get("category", "")}
+            for item in local_results[:8]
+        ]
+        with connect() as db:
+            db.execute(
+                "INSERT INTO ai_messages(thread_id,role,content,provider,model,sources_json,created_at) VALUES(?,?,?,?,?,?,?)",
+                (thread_id, "assistant", response, "local", "Dimitry local estructurado", json.dumps(sources, ensure_ascii=False), utc_now()),
+            )
+            db.execute("UPDATE ai_threads SET updated_at=? WHERE id=?", (utc_now(), thread_id))
+        return {
+            "thread_id": thread_id,
+            "response": response,
+            "provider": "local",
+            "model": "Dimitry local estructurado",
+            "sources": sources,
+            "warning": f"Se utilizó el motor local porque no había un proveedor generativo externo disponible: {exc}",
+        }
 
     sources = list(result.sources)
     for item in local_results[:8]:
@@ -721,6 +758,42 @@ Usa la biblioteca cuando sea relevante, menciona el título de cada fuente local
         )
         db.execute("UPDATE ai_threads SET updated_at=? WHERE id=?", (utc_now(), thread_id))
     return {"thread_id": thread_id, **result.as_dict(), "sources": sources}
+
+
+def _embedded_assistant_answer(domain: str, message: str, results: list[dict]) -> str:
+    """Respuesta transparente y útil cuando no existe una IA generativa externa."""
+    if results:
+        lines = ["Respuesta elaborada con la biblioteca local de Dimitry Hub:", ""]
+        for index, item in enumerate(results[:6], start=1):
+            title = re.sub(r"\s+", " ", str(item.get("title") or "Fuente local")).strip()
+            snippet = re.sub(r"\s+", " ", str(item.get("snippet") or "")).strip()
+            lines.extend([f"{index}. {title}", snippet[:600] or "La entrada no contiene un resumen legible.", ""])
+        lines.append("La coincidencia de texto orienta la revisión, pero no reemplaza la comprobación del archivo o fuente original.")
+        return "\n".join(lines)
+
+    if domain == "legal":
+        return (
+            "Dimitry Hub está en modo local. Para preparar un borrador jurídico peruano sin inventar datos, usa Estudio > Escritos jurídicos y completa: tipo de documento, autoridad, identidad, domicilio, fecha, sumilla, petitorio, hechos y anexos. "
+            "Las normas y plazos deben verificarse en una fuente oficial antes de presentar el escrito."
+        )
+    if domain == "research":
+        return (
+            "Dimitry Hub está en modo local y no encontró una fuente suficiente en la biblioteca. Puedes avanzar con este control: delimita la pregunta, define palabras clave, busca DOI o fuentes oficiales, registra autor y fecha, contrasta al menos dos fuentes y audita las referencias antes de redactar. "
+            "No presentaré autores, DOI ni resultados como reales sin verificarlos."
+        )
+    if domain in {"gamemod", "libtool"}:
+        return (
+            "Dimitry Hub está en modo local. Para un análisis técnico verificable, importa un ZIP o usa el analizador Lua de Game Lab. Trabaja sobre una copia, identifica versión y entorno, registra cada cambio y prepara una forma de restauración. "
+            "Sin un dump o archivo concreto no inventaré clases, direcciones, funciones ni patrones."
+        )
+    if domain == "palworld":
+        return (
+            "No encontré una coincidencia suficiente en la biblioteca local de Palworld. Prueba con el nombre exacto del Pal, habilidad, pasiva, archivo o código interno, o abre Palworld Wiki para consultar el material sincronizado."
+        )
+    return (
+        "Dimitry AI está funcionando con el motor local integrado, pero no hay un modelo generativo externo configurado. Puedo organizar archivos en fichas, crear monografías y escritos, revisar la biblioteca de Palworld y analizar Lua o ZIP desde sus herramientas especializadas. "
+        "Para una respuesta generativa abierta de mayor alcance, configura OpenAI API, Ollama o un endpoint compatible en Ajustes."
+    )
 
 
 def _ai_call(
