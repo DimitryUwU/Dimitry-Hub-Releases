@@ -1,7 +1,7 @@
 {
-  "version": "1.0.2",
-  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.0.2/Dimitry_Hub_Setup_x64.exe",
-  "sha256": "58067414bd90537900f40160508f87ff478b494a7e2ecd4fd98d4d0c6e5c9350",
-  "notes": "Corrige los avisos repetidos de Tema aplicado y Tipografía aplicada que aparecían al hacer clic en cualquier lugar de cualquier pestaña. Los controles de apariencia ahora solo responden a sus botones correspondientes y no vuelven a guardar una selección que ya estaba activa.",
-  "published_at": "2026-08-01T03:41:03.3697350Z"
+  "version": "1.0.3",
+  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.0.3/Dimitry_Hub_Setup_x64.exe",
+  "sha256": "cba7282d95ffbedc9a1e5ba64fbcb39c0ad4decd896fb13acb1c516e265c3ec6",
+  "notes": "Mejora la instalación y el uso diario: el instalador cierra automáticamente el proceso de Dimitry Hub, el botón superior ahora indica Sincronizar datos y muestra el nombre y detalle de cualquier fuente con error, se corrige la conexión con GitHub del editor de Palworld, el botón con la inicial abre un panel de perfil y control rápido con opción para cerrar realmente la aplicación, y Dimitry AI deja claro cuando todavía no existe ningún proveedor configurado.",
+  "published_at": "2026-08-01T04:03:17.2889458Z"
 }
