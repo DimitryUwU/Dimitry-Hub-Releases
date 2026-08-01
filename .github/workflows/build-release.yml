@@ -52,6 +52,9 @@ jobs:
           if (Test-Path 'patches/current') {
             Copy-Item 'patches/current/*' 'build/src' -Recurse -Force
           }
+          if (Test-Path 'patches/apply.ps1') {
+            & 'patches/apply.ps1' -Root 'build/src'
+          }
 
           @"
           APP_VERSION = "$($config.version)"
