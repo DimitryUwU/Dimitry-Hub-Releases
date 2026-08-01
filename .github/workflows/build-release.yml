@@ -2,16 +2,9 @@ name: Build and publish Dimitry Hub
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
-      - "payload/**"
-      - ".github/workflows/build-release.yml"
-      - "release-config.json"
-  pull_request:
-    branches:
-      - main
-    paths:
+      - "source/**"
       - ".github/workflows/build-release.yml"
       - "release-config.json"
   workflow_dispatch:
@@ -26,7 +19,6 @@ concurrency:
 jobs:
   build-and-release:
     runs-on: windows-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,60 +28,24 @@ jobs:
         shell: pwsh
         run: |
           $config = Get-Content release-config.json -Raw | ConvertFrom-Json
-          if (-not $config.version) { throw 'release-config.json no contiene version.' }
-          if (-not $config.source_sha256) { throw 'release-config.json no contiene source_sha256.' }
+          if (-not $config.version) { throw 'Falta version en release-config.json.' }
+          if (-not $config.source_sha256) { throw 'Falta source_sha256 en release-config.json.' }
           "version=$($config.version)" >> $env:GITHUB_OUTPUT
           "tag=v$($config.version)" >> $env:GITHUB_OUTPUT
 
-      - name: Restore and verify source archive
+      - name: Verify and extract source archive
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          Remove-Item build -Recurse -Force -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force build | Out-Null
-
-          $parts = @(Get-ChildItem payload -Filter 'part-*.b64' | Sort-Object Name)
-          if ($parts.Count -ne 17) {
-            throw "Se esperaban 17 partes del código fuente y se encontraron $($parts.Count)."
-          }
-
-          $base64 = ($parts | ForEach-Object { (Get-Content $_.FullName -Raw).Trim() }) -join ''
-          [IO.File]::WriteAllBytes('build\source.zip', [Convert]::FromBase64String($base64))
-
+          $archive = 'source/Dimitry_Hub_Source_v1.0.0.zip'
+          if (-not (Test-Path $archive)) { throw "Falta $archive" }
           $config = Get-Content release-config.json -Raw | ConvertFrom-Json
+          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
           $expected = $config.source_sha256.ToLowerInvariant()
-          $actual = (Get-FileHash 'build\source.zip' -Algorithm SHA256).Hash.ToLowerInvariant()
-          if ($actual -ne $expected) {
-            throw "La verificación del código fuente falló. Esperado: $expected. Obtenido: $actual."
-          }
-
-          New-Item -ItemType Directory -Force 'build\src' | Out-Null
-          Expand-Archive 'build\source.zip' 'build\src' -Force
-
-          @'
-          DIMITRY HUB 1.0
-
-          INSTALACIÓN
-          1. Ejecuta Dimitry_Hub_Setup_x64.exe.
-          2. Mantén marcada la opción para crear un acceso directo si lo deseas.
-          3. Al finalizar, abre Dimitry Hub.
-
-          ACTUALIZACIONES AUTOMÁTICAS
-          Dimitry Hub consulta su canal oficial de versiones al iniciarse.
-          Cuando existe una versión más reciente, descarga el instalador oficial,
-          verifica su huella SHA-256 y realiza la actualización.
-
-          El mismo instalador sirve para una instalación nueva o para actualizar.
-          Tus proyectos, documentos y ajustes personales se conservan en:
-          %LOCALAPPDATA%\Dimitry Hub\Data
-
-          INTELIGENCIA ARTIFICIAL
-          En Ajustes puedes conectar OpenAI API u Ollama.
-          ChatGPT Plus y la API de OpenAI son servicios separados.
-
-          SEGURIDAD
-          Dimitry Hub no modifica automáticamente tus partidas personales.
-          '@ | Set-Content 'build\src\LEEME_PRIMERO.txt' -Encoding utf8
+          if ($actual -ne $expected) { throw "SHA-256 incorrecto. Esperado: $expected. Obtenido: $actual" }
+          Remove-Item build -Recurse -Force -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force build/src | Out-Null
+          Expand-Archive $archive build/src -Force
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -101,7 +57,6 @@ jobs:
       - name: Install build dependencies
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Stop'
           python -m pip install --upgrade pip
           python -m pip install -r build/src/requirements.txt
           python -m pip install pyinstaller
@@ -110,7 +65,6 @@ jobs:
         shell: pwsh
         working-directory: build/src
         run: |
-          $ErrorActionPreference = 'Stop'
           python -m compileall app run.py updater.py
           python -m unittest discover -s tests -p 'test_*.py'
 
@@ -118,32 +72,24 @@ jobs:
         shell: pwsh
         working-directory: build/src
         run: |
-          $ErrorActionPreference = 'Stop'
           python -m PyInstaller --noconfirm --clean --onefile --windowed --name DimitryHub --icon dimitry_hub.ico --add-data "app/static;app/static" --hidden-import uvicorn.logging --hidden-import uvicorn.loops.auto --hidden-import uvicorn.protocols.http.auto --hidden-import uvicorn.protocols.websockets.auto --hidden-import uvicorn.lifespan.on run.py
           python -m PyInstaller --noconfirm --clean --onefile --windowed --name DimitryHubUpdater updater.py
 
       - name: Install Inno Setup
         shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          choco install innosetup -y --no-progress
+        run: choco install innosetup -y --no-progress
 
       - name: Build installer
         shell: pwsh
         working-directory: build/src
         run: |
-          $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force release | Out-Null
-          $candidates = @(
-            'C:\Program Files (x86)\Inno Setup 6\ISCC.exe',
-            'C:\Program Files\Inno Setup 6\ISCC.exe'
-          )
-          $iscc = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $iscc) { throw 'No se encontró ISCC.exe de Inno Setup.' }
+          $iscc = @('C:\Program Files (x86)\Inno Setup 6\ISCC.exe','C:\Program Files\Inno Setup 6\ISCC.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) { throw 'No se encontró Inno Setup.' }
           & $iscc "/DMyAppVersion=${{ steps.config.outputs.version }}" installer.iss
-          if ($LASTEXITCODE -ne 0) { throw "Inno Setup terminó con el código $LASTEXITCODE." }
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup terminó con código $LASTEXITCODE." }
 
-      - name: Generate update manifest and checksums
+      - name: Generate manifest and checksums
         shell: pwsh
         working-directory: build/src
         env:
@@ -151,20 +97,16 @@ jobs:
           RELEASE_TAG: ${{ steps.config.outputs.tag }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          $ErrorActionPreference = 'Stop'
-          $installer = Resolve-Path 'release\Dimitry_Hub_Setup_x64.exe'
+          $installer = Resolve-Path 'release/Dimitry_Hub_Setup_x64.exe'
           $sha = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
-          $config = Get-Content '..\..\release-config.json' -Raw | ConvertFrom-Json
-
-          $manifest = [ordered]@{
+          $config = Get-Content '../../release-config.json' -Raw | ConvertFrom-Json
+          [ordered]@{
             version = $env:RELEASE_VERSION
             installer_url = "https://github.com/$env:REPOSITORY/releases/download/$env:RELEASE_TAG/Dimitry_Hub_Setup_x64.exe"
             sha256 = $sha
             notes = $config.notes
             published_at = (Get-Date).ToUniversalTime().ToString('o')
-          }
-
-          $manifest | ConvertTo-Json -Depth 4 | Set-Content latest.json -Encoding utf8
+          } | ConvertTo-Json -Depth 4 | Set-Content latest.json -Encoding utf8
           "$sha  Dimitry_Hub_Setup_x64.exe" | Set-Content checksums.sha256 -Encoding ascii
           $config.notes | Set-Content release-notes.txt -Encoding utf8
 
@@ -174,30 +116,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.config.outputs.tag }}
         run: |
-          $ErrorActionPreference = 'Stop'
           gh release view $env:RELEASE_TAG --json tagName *> $null
-          if ($LASTEXITCODE -eq 0) {
-            gh release delete $env:RELEASE_TAG --yes --cleanup-tag
-            if ($LASTEXITCODE -ne 0) { throw 'No se pudo reemplazar la versión existente.' }
-          }
+          if ($LASTEXITCODE -eq 0) { gh release delete $env:RELEASE_TAG --yes --cleanup-tag }
+          gh release create $env:RELEASE_TAG build/src/release/Dimitry_Hub_Setup_x64.exe build/src/checksums.sha256 build/src/latest.json --title "Dimitry Hub $env:RELEASE_TAG" --notes-file build/src/release-notes.txt --latest
 
-          gh release create $env:RELEASE_TAG `
-            build/src/release/Dimitry_Hub_Setup_x64.exe `
-            build/src/checksums.sha256 `
-            build/src/latest.json `
-            --title "Dimitry Hub $env:RELEASE_TAG" `
-            --notes-file build/src/release-notes.txt `
-            --latest
-          if ($LASTEXITCODE -ne 0) { throw 'No se pudo publicar la versión en GitHub Releases.' }
-
-      - name: Publish latest manifest on main branch
-        if: github.event_name != 'pull_request'
+      - name: Publish latest manifest on main
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Stop'
           Copy-Item build/src/latest.json latest.json -Force
           Copy-Item build/src/checksums.sha256 checksums.sha256 -Force
-
           git config user.name 'Dimitry Hub Release Bot'
           git config user.email 'actions@users.noreply.github.com'
           git add latest.json checksums.sha256
