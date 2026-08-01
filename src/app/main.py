@@ -1437,7 +1437,12 @@ def knowledge_ask(payload: KnowledgeQuestion) -> dict:
         for item in results
     )
     domain_rules = {
-        "palworld": "Responde sobre Palworld usando el material local. Distingue datos confirmados de inferencias y no inventes códigos internos.",
+        "palworld": (
+            "Responde sobre Palworld usando el material local. Distingue datos confirmados de inferencias y no inventes "
+            "códigos internos, fechas ni versiones. El catálogo sincronizado, PalDB y las wikis son referencias de datos "
+            "o guías comunitarias: nunca las llames fuentes oficiales salvo que el contexto indique expresamente que una "
+            "entrada procede de un canal oficial de Palworld."
+        ),
         "gamemod": "Ayuda a analizar mods, dumps, LibTool, Unity y Lua de forma técnica y reversible.",
         "libtool": "Ayuda con LibTool, dumps y Lua de manera reversible y segura.",
     }
