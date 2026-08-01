@@ -8,6 +8,12 @@ on:
       - "payload/**"
       - ".github/workflows/build-release.yml"
       - "release-config.json"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/build-release.yml"
+      - "release-config.json"
   workflow_dispatch:
 
 permissions:
@@ -185,6 +191,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'No se pudo publicar la versión en GitHub Releases.' }
 
       - name: Publish latest manifest on main branch
+        if: github.event_name != 'pull_request'
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
