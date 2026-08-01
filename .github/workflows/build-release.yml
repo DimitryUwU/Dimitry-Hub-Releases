@@ -53,7 +53,13 @@ jobs:
             throw "Se esperaban 17 partes del código fuente y se encontraron $($parts.Count)."
           }
 
-          $base64 = ($parts | ForEach-Object { (Get-Content $_.FullName -Raw).Trim() }) -join ''
+          $cleanParts = foreach ($part in $parts) {
+            $raw = Get-Content $part.FullName -Raw
+            $clean = [regex]::Replace($raw, '[^A-Za-z0-9+/=]', '')
+            Write-Host "$($part.Name): raw=$($raw.Length), base64=$($clean.Length)"
+            $clean
+          }
+          $base64 = $cleanParts -join ''
           [IO.File]::WriteAllBytes('build\source.zip', [Convert]::FromBase64String($base64))
 
           $config = Get-Content release-config.json -Raw | ConvertFrom-Json
