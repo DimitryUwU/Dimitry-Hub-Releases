@@ -407,4 +407,1062 @@ async def upload_file(project_id: int, upload: UploadFile = File(...)) -> dict:
     content = await upload.read()
     if len(content) > 300 * 1024 * 1024:
         raise HTTPException(413, "El archivo supera el lÃ­mite de 300 MB")
-    name = safe_filename(upload.filename or "arch×MuîÚ$z{-®éÜj×"Â$””’"Â$•b"¢G&gBÒ%Æâ"æ¦ö–â€¢—FVĞ¢f÷"–æFW‚Â††VF–ærÂ6öçFVçB’–âVçVÖW&FR‡÷VÆFVE÷'G2¢f÷"—FVÒ–â†b'·&öÖå¶–æFW…×Òâ¶†VF–æwÒ"Â6öçFVçB¢¢v&æ–ærÒ" ¢•ö–æfó¢F–7BÒ·Ğ¢–b–ÆöBçW6Uö“ ¢&ö×BÒb""%&VF7FVâ&÷'&F÷"§W,:ÖF–6òW'VæòFVÂF—òw·–ÆöBæ¶–æGÒrà ¥&VvÆ2W7G&–7F3 ¢ÒW6;¦æ–6ÖVçFRÆ÷2†V6†÷2ÂWF—F÷&–òÂæ÷&Ö2’'VV&2&÷÷&6–öæF÷2à¢Òæò–çfVçFW2'L:Ö7VÆ÷2Â§W&—7'VFVæ6–ÂÆ¦÷2Â6ö×WFVæ6–2æ’FF÷2W'6öæÆW2à¢ÒöÖ—FR7VÇV–W"6V66œ;6â÷6–öæÂVRæòFVæv6öçFVæ–Fó²æò–ç6W'FW2–ç7G'V66–öæW2æ’Ö&6F÷&W2–çFW&æ÷2à¢Ò6öç6W'fW7F26V66–öæW2’æò;F2÷G&3¢¶W‡V7FVE÷6V7F–öç7Òà¢ÒFöæòf÷&ÖÂÂ6Æ&ò’F—&V7Fòà¢ÒW7FRW2Vâ&÷'&F÷"&&Wf—6œ;6â&öfW6–öæÂà Ğ¥WF—F÷&–ó Ğ§·–ÆöBç&WVW7E÷FW‡GĞĞ Ğ¤†V6†÷3 Ğ§·–ÆöBæf7G7ĞĞ Ğ¤gVæFÖVçFòÆVvÂ&÷÷&6–öæFó Ğ§·–ÆöBæÆVvÅö&6—7ĞĞ Ğ¥'VV&2’æW†÷3 Ğ§·–ÆöBæWf–FVæ6WĞĞ¢"" Ğ¢G'“ Ğ¢&W7VÇBÒö•ö6ÆÂ€Ğ¢&ö×BÀĞ¢7—7FVÓÒ$W&W2Vâ6—7FVçFRFR&VF66œ;6â§W,:ÖF–6W'VæâçVæ6–çfVçF2Vææ÷&ÖâF—7F–æwVR6Æ&ÖVçFRVçG&Ræ÷&ÖfW&–f–6FÂFFò÷'FFò’VçFòVæF–VçFRâ"ÀĞ¢W'÷6SÒ&ÆVvÂ"ÀĞ¢ÆÆ÷u÷vV#×–ÆöBçfW&–g•÷vV"ÀĞ¢ÆÆ÷vVEöFöÖ–ç3Õ²&vö"çR"Â'¢ævö"çR"Â'F2ævö"çR"Â&6öæw&W6òævö"çR"Â&VÇW'VæòçR%ÒÀĞ¢F–ÖV÷WCÓ3cÀĞ¢Ğ¢•ö–æfòÒ&W7VÇ@Ğ¢–b&W7VÇBævWB‚'&W7öç6R"Â""’ç7G&—‚“ Ğ¢G&gBÒ&W7VÇE²'&W7öç6R%Òç7G&—‚Ğ¢W†6WB…EEW†6WF–öâ2W†3 Ğ¢v&æ–ærÒW†2æFWF–ÀĞ¢F&vWBÒ7&VFUöÆVvÅöFö7‚†¶–æBÂf–VÆG2ÂG&gB¢&WGW&â°Ğ¢&G&gB#¢G&gBÀĞ¢&F÷væÆöE÷W&Â#¢b"ö’övVæW&FVB÷·F&vWBææÖWÒ"ÀĞ¢&f–ÆVæÖR#¢F&vWBææÖRÀĞ¢'v&æ–ær#¢v&æ–ærÀĞ¢'&÷f–FW"#¢•ö–æfòævWB‚'&÷f–FW""Â""’ÀĞ¢&ÖöFVÂ#¢•ö–æfòævWB‚&ÖöFVÂ"Â""’ÀĞ¢'6÷W&6W2#¢•ö–æfòævWB‚'6÷W&6W2"ÂµÒ’ÀĞ¢ĞĞ Ğ Ğ¤ævWB‚"ö’övVæW&FVB÷¶f–ÆVæÖWÒ"¦FVbF÷væÆöEövVæW&FVB†f–ÆVæÖS¢7G"’Óâf–ÆU&W7öç6S ¢F&vWBÒtTäU$DTEôD•"ò6fUöf–ÆVæÖR†f–ÆVæÖRĞ¢–bæ÷BF&vWBæW†—7G2‚“ Ğ¢&—6R…EEW†6WF–öâƒCBÂ$Fö7VÖVçFòvVæW&FòæòVæ6öçG&Fò"Ğ¢&WGW&âf–ÆU&W7öç6R‡F&vWBÂf–ÆVæÖS×F&vWBææÖR  ¤ç÷7B‚"ö’övÖVÖöBöÇVöæÇ—¦R"¦7–æ2FVbvÖVÖöEöÇVöæÇ—¦R‡WÆöC¢WÆöDf–ÆRÒf–ÆR‚âââ’’ÓâF–7C ¢–bæ÷BWÆöBæf–ÆVæÖR÷"F‚‡WÆöBæf–ÆVæÖR’ç7Vff—‚æÆ÷vW"‚’Ò"æÇV# ¢&—6R…EEW†6WF–öâƒCÂ%6VÆV66–öæVâ&6†—fò6öâW‡FVç6œ;6âæÇV"¢6öçFVçBÒv—BWÆöBç&VB‚¢–bÆVâ†6öçFVçB’âR¢#B¢#C ¢&—6R…EEW†6WF–öâƒC2Â$VÂ&6†—fòÇV7WW&VÂÌ:ÖÖ—FRFRRÔ""¢G'“ ¢6÷W&6RÒ6öçFVçBæFV6öFR‚'WFbÓ‚×6–r"¢W†6WBVæ–6öFTFV6öFTW'&÷# ¢6÷W&6RÒ6öçFVçBæFV6öFR‚&ÆF–âÓ"¢G'“ ¢&WGW&âæÇ—¦UöÇV÷6÷W&6R‡6÷W&6RÂ6fUöf–ÆVæÖR‡WÆöBæf–ÆVæÖR’¢W†6WBfÇVTW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’  ¤ç÷7B‚"ö’övÖVÖöBöÇVövVæW&FR"¦FVbvÖVÖöEöÇVövVæW&FR‡–ÆöC¢ÇVvVæW&FU&WVW7B’ÓâF–7C ¢G'“ ¢67&—BÒvVæW&FUövÖVwV&F–å÷67&—B‡–ÆöBææÖRÂ–ÆöBæWF†÷"Â–ÆöBæFW67&—F–öâÂ–ÆöBæ6†ævW2¢W†6WBfÇVTW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒC#"Â7G"†W†2’¢&6UöæÖRÒ6fUöf–ÆVæÖR…F‚‡–ÆöBææÖR’ç7FVÒ’ç7G&—‚"â"’÷"'67&—BÖvÖVwV&F–â ¢F&vWBÒtTäU$DTEôD•"ò6fUöf–ÆVæÖR†b'¶&6UöæÖWÒ×·WF5öæ÷r‚’ç&WÆ6R‚s¢rÂrÒr—ÒæÇV"¢FöÖ–5÷w&—FUö'—FW2‡F&vWBÂ67&—BæVæ6öFR‚'WFbÓ‚"’¢&WGW&â°¢&f–ÆVæÖR#¢F&vWBææÖRÀ¢&F÷væÆöE÷W&Â#¢b"ö’övVæW&FVB÷·F&vWBææÖWÒ"À¢'&Wf–Wr#¢67&—BÀ¢&7F–öç2#¢ÆVâ…¶Æ–æRf÷"Æ–æR–â–ÆöBæ6†ævW2ç7Æ—FÆ–æW2‚’–bÆ–æRç7G&—‚’æBæ÷BÆ–æRæÇ7G&—‚’ç7F'G7v—F‚‚‚"2"Â"ÒÒ"’•Ò’À¢Ğ Ğ Ğ¤ævWB‚"ö’ö¶æ÷vÆVFvR÷¶FöÖ–çÒ÷7VÖÖ'’"Ğ¦FVb¶æ÷vÆVFvU÷7VÖÖ'’†FöÖ–ã¢7G"’ÓâF–7C Ğ¢&WGW&â6÷W&6U÷7VÖÖ'’†FöÖ–âĞ Ğ Ğ¤ævWB‚"ö’ö¶æ÷vÆVFvR÷¶FöÖ–çÒ÷6V&6‚"Ğ¦FVb¶æ÷vÆVFvU÷6V&6‚†FöÖ–ã¢7G"Â¢7G"ÂÆ–Ö—C¢–çBÒ"’ÓâF–7C Ğ¢&WGW&â²'&W7VÇG2#¢6V&6…ö¶æ÷vÆVFvR†FöÖ–âÂÂÖ‚ƒÂÖ–â†Æ–Ö—BÂ3’’—ĞĞ Ğ Ğ¤ç÷7B‚"ö’ö¶æ÷vÆVFvR÷¶FöÖ–çÒ÷WÆöB"Ğ¦7–æ2FVb¶æ÷vÆVFvU÷WÆöB†FöÖ–ã¢7G"ÂWÆöC¢WÆöDf–ÆRÒf–ÆR‚âââ’ÂæÖS¢7G"Òf÷&Ò‚""’’ÓâF–7C Ğ¢–bæ÷BWÆöBæf–ÆVæÖR÷"F‚‡WÆöBæf–ÆVæÖR’ç7Vff—‚æÆ÷vW"‚’Ò"ç¦—# Ğ¢&—6R…EEW†6WF–öâƒCÂ%7V&RVâ&6†—fò¤•"Ğ¢6öçFVçBÒv—BWÆöBç&VB‚Ğ¢–bÆVâ†6öçFVçB’âƒ¢#B¢#C Ğ¢&—6R…EEW†6WF–öâƒC2Â$VÂ¤•7WW&VÂÌ:ÖÖ—FRFRƒÔ""Ğ¢FV×öF—"Ò´äõtÄTDtUôD•"ò&–æ6öÖ–ær Ğ¢FV×öF—"æÖ¶F—"‡&VçG3ÕG'VRÂW†—7Eöö³ÕG'VRĞ¢FV×÷F‚ÒFV×öF—"òb'·WF5öæ÷r‚’ç&WÆ6R‚s¢rÂrÒr—Õ÷·6fUöf–ÆVæÖR‡WÆöBæf–ÆVæÖR—Ò Ğ¢FöÖ–5÷w&—FUö'—FW2‡FV×÷F‚Â6öçFVçBĞ¢G'“ Ğ¢&W7VÇBÒ–×÷'Eö'VæFÆR‡FV×÷F‚ÂFöÖ–ãÖFöÖ–âÂF—7Æ•öæÖSÖæÖR÷"WÆöBæf–ÆVæÖRĞ¢æÇ—6—2ÒæÇ—¦Uö'VæFÆR…F‚‡&W7VÇE²&W‡G&7EöF—"%Ò’Ğ¢&W7VÇE²&æÇ—6—2%ÒÒæÇ—6—0Ğ¢&WGW&â&W7VÇ@Ğ¢W†6WB¦—f–ÆRä&E¦—f–ÆS Ğ¢&—6R…EEW†6WF–öâƒCÂ$VÂ&6†—fòæòW2Vâ¤•l:Æ–Fò"Ğ¢W†6WBfÇVTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’Ğ¢f–æÆÇ“ Ğ¢FV×÷F‚çVæÆ–æ²†Ö—76–æuöö³ÕG'VRĞ Ğ Ğ¤ævWB‚"ö’÷Çv÷&ÆB÷v÷&·76R÷7FGW2"Ğ¦FVbÇv÷&ÆE÷v÷&·76U÷7FGW2†6†V6µööæÆ–æS¢&ööÂÒfÇ6R’ÓâF–7C Ğ¢G'“ Ğ¢&WGW&â²&VF—F÷"#¢VF—F÷%÷7FGW2†6†V6µööæÆ–æR’Â'6W76–öç2#¢Æ—7E÷6W76–öç2‚—ĞĞ¢W†6WB'VçF–ÖTW'&÷"2W†3 Ğ¢&WGW&â²&VF—F÷"#¢²¢¦VF—F÷%÷7FGW2„fÇ6R’Â&öæÆ–æUöW'&÷"#¢7G"†W†2—ÒÂ'6W76–öç2#¢Æ—7E÷6W76–öç2‚—ĞĞ Ğ Ğ¤ç÷7B‚"ö’÷Çv÷&ÆB÷v÷&·76R÷WÆöB"Ğ¦7–æ2FVbÇv÷&ÆE÷v÷&·76U÷WÆöB€Ğ¢WÆöC¢WÆöDf–ÆRÒf–ÆR‚âââ’ÂW‡V7FVEö¶–æC¢7G"Òf÷&Ò‚&WFò"’ÀĞ¢’ÓâF–7C Ğ¢–bæ÷BWÆöBæf–ÆVæÖS Ğ¢&—6R…EEW†6WF–öâƒCÂ%6VÆV66–öæVâ&6†—fò"Ğ¢Vç7W&U÷v÷&·76UöF—'2‚Ğ¢FV×÷Fƒ¢F‚ÂæöæRÒæöæPĞ¢G'“ Ğ¢v—F‚FV×f–ÆRäæÖVEFV×÷&'”f–ÆR†FVÆWFSÔfÇ6RÂF—#Ô”ä4ôÔ”äuôD•"Â7Vff—ƒÒ"ç'B"’2FV× Ğ¢FV×÷F‚ÒF‚‡FV×ææÖRĞ¢F÷FÂÒ Ğ¢v†–ÆRG'VS Ğ¢6‡Væ²Òv—BWÆöBç&VBƒ#B¢#BĞ¢–bæ÷B6‡Væ³ Ğ¢'&V°Ğ¢F÷FÂ³ÒÆVâ†6‡Væ²Ğ¢–bF÷FÂâÔ…õUÄôEô%•DU3 Ğ¢&—6R…EEW†6WF–öâƒC2Â$VÂ&6†—fò7WW&VÂÌ:ÖÖ—FRFR"t""Ğ¢FV×çw&—FR†6‡Væ²Ğ¢&WGW&â7&VFU÷6W76–öåög&öÕ÷F‚‡FV×÷F‚ÂWÆöBæf–ÆVæÖRÂW‡V7FVEö¶–æBĞ¢W†6WB…EEW†6WF–öã Ğ¢&—6PĞ¢W†6WB…fÇVTW'&÷"Â¦—f–ÆRä&E¦—f–ÆR’2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0Ğ¢W†6WBW†6WF–öâ2W†3 Ğ¢&—6R…EEW†6WF–öâƒSÂb$æò6RVFò&W&"VÂwV&FFó¢¶W†7Ò"’g&öÒW†0Ğ¢f–æÆÇ“ Ğ¢–bFV×÷F‚æBFV×÷F‚æW†—7G2‚“ Ğ¢FV×÷F‚çVæÆ–æ²†Ö—76–æuöö³ÕG'VRĞ Ğ Ğ¤ævWB‚"ö’÷Çv÷&ÆB÷v÷&·76R÷6W76–öç2"Ğ¦FVbÇv÷&ÆE÷v÷&·76U÷6W76–öç2‚’ÓâF–7C Ğ¢&WGW&â²'6W76–öç2#¢Æ—7E÷6W76–öç2‚—ĞĞ Ğ Ğ¤æFVÆWFR‚"ö’÷Çv÷&ÆB÷v÷&·76R÷6W76–öç2÷·6W76–öåö–GÒ"Ğ¦FVbÇv÷&ÆE÷v÷&·76UöFVÆWFR‡6W76–öåö–C¢7G"’ÓâF–7C Ğ¢G'“ Ğ¢FVÆWFU÷6W76–öâ‡6W76–öåö–BĞ¢&WGW&â²&FVÆWFVB#¢G'VWĞĞ¢W†6WBf–ÆTæ÷Df÷VæDW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCBÂ7G"†W†2’’g&öÒW†0Ğ¢W†6WBfÇVTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0Ğ Ğ Ğ¤ævWB‚"ö’÷Çv÷&ÆB÷v÷&·76R÷6W76–öç2÷·6W76–öåö–GÒöF÷væÆöB"¦FVbÇv÷&ÆE÷v÷&·76UöF÷væÆöB‡6W76–öåö–C¢7G"Âf&–çC¢7G"Ò&&6·W"’Óâf–ÆU&W7öç6S Ğ¢G'“ Ğ¢F&vWBÒ6W76–öåöf–ÆR‡6W76–öåö–BÂf&–çBĞ¢&WGW&âf–ÆU&W7öç6R‡F&vWBÂf–ÆVæÖS×F&vWBææÖRĞ¢W†6WBf–ÆTæ÷Df÷VæDW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCBÂ7G"†W†2’’g&öÒW†0Ğ¢W†6WBfÇVTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0  ¤ç÷7B‚"ö’÷Çv÷&ÆB÷v÷&·76R÷6W76–öç2÷·6W76–öåö–GÒ÷&W7F÷&R"¦FVbÇv÷&ÆE÷v÷&·76U÷&W7F÷&R‡6W76–öåö–C¢7G"’ÓâF–7C ¢G'“ ¢&WGW&â²'&W7F÷&VB#¢G'VRÂ'6W76–öâ#¢&W7F÷&U÷6W76–öâ‡6W76–öåö–B—Ğ¢W†6WBf–ÆTæ÷Df÷VæDW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒCBÂ7G"†W†2’’g&öÒW†0¢W†6WBfÇVTW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0 Ğ Ğ¤ç÷7B‚"ö’÷Çv÷&ÆB÷v÷&·76R÷6W76–öç2÷·6W76–öåö–GÒö÷VâÖföÆFW""Ğ¦FVbÇv÷&ÆE÷v÷&·76Uö÷VåöföÆFW"‡6W76–öåö–C¢7G"’ÓâF–7C Ğ¢G'“ Ğ¢&WGW&â÷Vå÷6W76–öåöföÆFW"‡6W76–öåö–BĞ¢W†6WBf–ÆTæ÷Df÷VæDW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCBÂ7G"†W†2’’g&öÒW†0Ğ¢W†6WB…fÇVTW'&÷"Â'VçF–ÖTW'&÷"’2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0Ğ Ğ Ğ¤ç÷7B‚"ö’÷Çv÷&ÆBöVF—F÷"ö–ç7FÆÂ"Ğ¦FVbÇv÷&ÆEöVF—F÷%ö–ç7FÆÂ‚’ÓâF–7C Ğ¢G'“ Ğ¢&WGW&â–ç7FÆÅöVF—F÷%öÆFW7B‚Ğ¢W†6WB'VçF–ÖTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒS2Â7G"†W†2’’g&öÒW†0Ğ Ğ Ğ¤ç÷7B‚"ö’÷Çv÷&ÆBöVF—F÷"öÆVæ6‚"¦FVbÇv÷&ÆEöVF—F÷%öÆVæ6‚‡–ÆöC¢ÄVF—F÷$ÆVæ6…&WVW7B’ÓâF–7C ¢G'“ Ğ¢&WGW&âÆVæ6…öVF—F÷"‡–ÆöBç6W76–öåö–BĞ¢W†6WBf–ÆTæ÷Df÷VæDW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCBÂ7G"†W†2’’g&öÒW†0Ğ¢W†6WB…fÇVTW'&÷"Â'VçF–ÖTW'&÷"’2W†3 ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0  ¤ævWB‚"ö’÷Çv÷&ÆB÷W&fV7B×Ç2÷7FGW2"¦FVbÇv÷&ÆE÷W&fV7E÷Ç5÷7FGW2‚’ÓâF–7C ¢&WGW&âW&fV7E÷Ç5÷7FGW2‚  ¤ç÷7B‚"ö’÷Çv÷&ÆB÷W&fV7B×Ç2övVæW&FR"¦FVbÇv÷&ÆE÷W&fV7E÷Ç5övVæW&FR‡–ÆöC¢W&fV7EÇ5&WVW7B’ÓâF–7C ¢G'“ ¢&WGW&âvVæW&FU÷&öf–ÆU÷6¶vW2‡&Vg&W6ƒ×–ÆöBç&Vg&W6…ö6FÆör¢W†6WB'VçF–ÖTW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒS2Â7G"†W†2’’g&öÒW†0  ¤ævWB‚"ö’÷Çv÷&ÆB÷W&fV7B×Ç2öF÷væÆöB÷¶vVæW&F–öåö–GÒ÷¶f–ÆUö¶W—Ò"¦FVbÇv÷&ÆE÷W&fV7E÷Ç5öF÷væÆöB†vVæW&F–öåö–C¢7G"Âf–ÆUö¶W“¢7G"’Óâf–ÆU&W7öç6S ¢G'“ ¢F&vWBÂæÖRÒvVæW&F–öåöF÷væÆöB†vVæW&F–öåö–BÂf–ÆUö¶W’¢&WGW&âf–ÆU&W7öç6R‡F&vWBÂf–ÆVæÖSÖæÖR¢W†6WBf–ÆTæ÷Df÷VæDW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒCBÂ7G"†W†2’’g&öÒW†0¢W†6WBfÇVTW'&÷"2W†3 ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’’g&öÒW†0  ¤ç÷7B‚"ö’÷Çv÷&ÆB÷7–æ2"¦FVb7–æ5÷Çv÷&ÆB‚’ÓâF–7C ¢""$6ö×F–&–Æ–FB6öâcãC¢†÷&V¦V7WFVÂ6VçG&ò6ö×ÆWFòFR6–æ7&öæ—¦6œ;6ââ"" Ğ¢&WGW&â'VåögVÆÅ÷7–æ2‚'Çv÷&ÆBÖ'WGFöâ"Ğ Ğ Ğ¤ç÷7B‚"ö’÷Çv÷&ÆB÷7–æ2ÖæWw2"Ğ¦FVb7–æ5÷Çv÷&ÆEöæWw2‚’ÓâF–7C Ğ¢&WGW&â'VåögVÆÅ÷7–æ2‚'Çv÷&ÆBÖæWw2Ö'WGFöâ"Ğ Ğ Ğ¤ç÷7B‚"ö’÷7–æ2öÆÂ"Ğ¦FVb7–æ5öÆÂ‚’ÓâF–7C Ğ¢&WGW&â'VåögVÆÅ÷7–æ2‚&ÖçVÂ"Ğ Ğ Ğ¤ævWB‚"ö’÷7–æ2÷7FGW2"Ğ¦FVbvWE÷7–æ5÷7FGW2‚’ÓâF–7C Ğ¢&WGW&â7–æ5÷7FGW2‚Ğ Ğ Ğ¤ç÷7B‚"ö’÷&W6V&6‚÷vV"Ö–×÷'B"Ğ¦FVb&W6V&6…÷vV%ö–×÷'B‡–ÆöC¢vV$–×÷'E&WVW7B’ÓâF–7C Ğ¢G'“ Ğ¢&WGW&â–×÷'E÷vV%÷6÷W&6R‡–ÆöBçW&ÂÂ–ÆöBæFöÖ–âÂ–ÆöBçF—FÆRĞ¢W†6WBfÇVTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’Ğ¢W†6WB'VçF–ÖTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒS2Â7G"†W†2’Ğ Ğ Ğ¤ç÷7B‚"ö’÷&W6V&6‚ö7&÷77&Vb÷6V&6‚"Ğ¦FVb&W6V&6…ö7&÷77&Ve÷6V&6‚‡–ÆöC¢7&÷77&Ve6V&6…&WVW7B’ÓâF–7C Ğ¢G'“ Ğ¢&WGW&â²'&W7VÇG2#¢7&÷77&Ve÷6V&6‚‡–ÆöBçVW'’Â–ÆöBç&÷w2—ĞĞ¢W†6WB…'VçF–ÖTW'&÷"ÂfÇVTW'&÷"’2W†3 Ğ¢&—6R…EEW†6WF–öâƒS2Â7G"†W†2’Ğ Ğ Ğ¤ævWB‚"ö’÷&W6V&6‚ö7&÷77&VböFö’"Ğ¦FVb&W6V&6…ö7&÷77&VeöFö’†Fö“¢7G"’ÓâF–7C Ğ¢–bæ÷BFö’ç7G&—‚“ Ğ¢&—6R…EEW†6WF–öâƒCÂ$W67&–&RVâDô’"Ğ¢G'“ Ğ¢&WGW&â7&÷77&VeöFö’†Fö’Ğ¢W†6WB…'VçF–ÖTW'&÷"ÂfÇVTW'&÷"’2W†3 Ğ¢&—6R…EEW†6WF–öâƒS2Â7G"†W†2’Ğ Ğ Ğ¤ç÷7B‚"ö’÷&W6V&6‚ö—FV×2"Ğ¦FVb&W6V&6…÷6fR‡–ÆöC¢&W6V&6…6fU&WVW7B’ÓâF–7C Ğ¢&WGW&â6fU÷&W6V&6…ö—FVÒ‡–ÆöBæ—FVÒĞ Ğ Ğ¤ævWB‚"ö’÷&W6V&6‚ö—FV×2"Ğ¦FVb&W6V&6…öÆ—7B†Æ–Ö—C¢–çBÒ’ÓâF–7C Ğ¢&WGW&â²&—FV×2#¢Æ—7E÷&W6V&6…ö—FV×2†Æ–Ö—B—ĞĞ Ğ Ğ¤ç÷7B‚"ö’÷&W6V&6‚öVF—B"Ğ¦FVb&W6V&6…öVF—B‡–ÆöC¢&–&Æ–öw&‡”VF—E&WVW7B’ÓâF–7C Ğ¢&WGW&â&–&Æ–öw&‡•öVF—B‡–ÆöBæ6öçFVçBÂ–ÆöBæ&–&Æ–öw&‡’Ğ Ğ Ğ¤ç÷7B‚"ö’÷&W6V&6‚÷7VvvW7B"Ğ¦FVb&W6V&6…÷7VvvW7B‡–ÆöC¢WFõ&W6V&6…&WVW7B’ÓâF–7C Ğ¢G'“ Ğ¢&WGW&â7VvvW7Eö6FVÖ–5÷6÷W&6W2‡–ÆöBçF—FÆRÂ–ÆöBæ6öçFVçBÂ–ÆöBç&÷w2Ğ¢W†6WBfÇVTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒCÂ7G"†W†2’Ğ¢W†6WB'VçF–ÖTW'&÷"2W†3 Ğ¢&—6R…EEW†6WF–öâƒS2Â7G"†W†2’Ğ Ğ Ğ¤ç÷7B‚"ö’ö¶æ÷vÆVFvRö6²"Ğ¦FVb¶æ÷vÆVFvUö6²‡–ÆöC¢¶æ÷vÆVFvUVW7F–öâ’ÓâF–7C ¢&W7VÇG2Ò6V&6…ö¶æ÷vÆVFvR‡–ÆöBæFöÖ–âÂ–ÆöBçVW7F–öâÂ¢–b–ÆöBæFöÖ–âÓÒ'Çv÷&ÆB# ¢Æ—fU÷&W7VÇG2Ò6V&6…öÆ—fUö6FÆör‡–ÆöBçVW7F–öâÂR¢W†—7F–ærÒ¶—FVÒævWB‚'6÷W&6Uö¶W’"’f÷"—FVÒ–âÆ—fU÷&W7VÇG7Ğ¢&W7VÇG2Ò†Æ—fU÷&W7VÇG2²¶—FVÒf÷"—FVÒ–â&W7VÇG2–b—FVÒævWB‚'6÷W&6Uö¶W’"’æ÷B–âW†—7F–æuÒ•³£Ğ¢Æö6Åöç7vW"ÒöffÆ–æUö¶æ÷vÆVFvUöç7vW"‡–ÆöBçVW7F–öâÂ&W7VÇG2Ğ¢–bæ÷B&W7VÇG3 Ğ¢&WGW&â²&ç7vW"#¢Æö6Åöç7vW"Â'&W7VÇG2#¢µÒÂ&öffÆ–æR#¢G'VWĞĞ Ğ¢7FGW2Ò•÷&÷f–FW%÷7FGW2‚Ğ¢&÷f–FW'2Ò7FGW2ævWB‚'&÷f–FW'2"Â·Ò’–b—6–ç7Fæ6R‡7FGW2ÂF–7B’VÇ6R·ĞĞ¢•÷&VG’Ò&ööÂ€Ğ¢&÷f–FW'2ævWB‚&÷Væ’"Â·Ò’ævWB‚&6öæf–wW&VB"Ğ¢÷"&÷f–FW'2ævWB‚&öÆÆÖ"Â·Ò’ævWB‚&öæÆ–æR"Ğ¢÷"&÷f–FW'2ævWB‚&6ö×F–&ÆR"Â·Ò’ævWB‚&6öæf–wW&VB"Ğ¢Ğ¢–bæ÷B•÷&VG“ Ğ¢&WGW&â°Ğ¢&ç7vW"#¢Æö6Åöç7vW"ÀĞ¢'&W7VÇG2#¢&W7VÇG2ÀĞ¢&öffÆ–æR#¢G'VRÀĞ¢'v&æ–ær#¢%&W7VW7FvVæW&FF—&V7FÖVçFRFW6FRÆ&–&Æ–÷FV6Æö6Ã²æò†’Vâ&÷fVVF÷"FR”6öæf–wW&Fòâ"ÀĞ¢ĞĞ Ğ¢6öçFW‡BÒ%ÆåÆâ"æ¦ö–â€Ğ¢b$eTTåDS¢¶—FVÕ²wF—FÆRu×Ò‡¶—FVÕ²v6FVv÷'’u×Ò•Æç¶—FVÕ²w6æ—WBu×Ò Ğ¢f÷"—FVÒ–â&W7VÇG0Ğ¢Ğ¢FöÖ–å÷'VÆW2Ò°Ğ¢'Çv÷&ÆB#¢%&W7öæFR6ö'&RÇv÷&ÆBW6æFòVÂÖFW&–ÂÆö6ÂâF—7F–æwVRFF÷26öæf—&ÖF÷2FR–æfW&Væ6–2’æò–çfVçFW2<;6F–v÷2–çFW&æ÷2â"ÀĞ¢&vÖVÖöB#¢$—VFæÆ—¦"ÖöG2ÂGV×2ÂÆ–%FööÂÂVæ—G’’ÇVFRf÷&ÖL:–6æ–6’&WfW'6–&ÆRâ"ÀĞ¢&Æ–'FööÂ#¢$—VF6öâÆ–%FööÂÂGV×2’ÇVFRÖæW&&WfW'6–&ÆR’6VwW&â"ÀĞ¢ĞĞ¢7—7FVÒÒFöÖ–å÷'VÆW2ævWB‡–ÆöBæFöÖ–âÂ%&W7öæFRW6æFòW†6ÇW6—fÖVçFRVÂ6öçFW‡FòÆö6Â&V7WW&Fòâ"Ğ¢&ö×BÒb""%&VwVçFFVÂW7V&–ó Ğ§·–ÆöBçVW7F–öçĞĞ Ğ¤6öçFW‡FòÆö6Â&V7WW&Fó Ğ§¶6öçFW‡GĞĞ Ğ¤6öçFW7FVâW7;öÂÂ6—FÆ÷2L:×GVÆ÷2W6F÷2’6\;Æ6Æ&ÖVçFR7VæFòÆWf–FVæ6–æòÆ6æ6RàĞ¢"" Ğ¢G'“ Ğ¢&W7VÇBÒö•ö6ÆÂ€Ğ¢&ö×BÂ7—7FVÓ×7—7FVÒÀĞ¢W'÷6SÒ&6öFR"–b–ÆöBæFöÖ–â–â²&vÖVÖöB"Â&Æ–'FööÂ'ÒVÇ6R&vVæW&Â"ÀĞ¢F–ÖV÷WCÓƒÀĞ¢Ğ¢ç7vW"Ò&W7VÇBævWB‚'&W7öç6R"Â""’ç7G&—‚Ğ¢&WGW&â²&ç7vW"#¢ç7vW"÷"Æö6Åöç7vW"Â'&W7VÇG2#¢&W7VÇG2Â&öffÆ–æR#¢æ÷B&ööÂ†ç7vW"—ĞĞ¢W†6WB…EEW†6WF–öâ2W†3 Ğ¢&WGW&â°Ğ¢&ç7vW"#¢Æö6Åöç7vW"ÀĞ¢'&W7VÇG2#¢&W7VÇG2ÀĞ¢&öffÆ–æR#¢G'VRÀĞ¢'v&æ–ær#¢b$Æ”æò&W7öæFœ;3²6RW<;2Æ&W7VW7FÆö6Ââ¶W†2æFWF–ÇÒ"ÀĞ¢ĞĞ Ğ
+    name = safe_filename(upload.filename or "archivo")
+    project_dir = FILES_DIR / str(project_id)
+    target = project_dir / f"{utc_now().replace(':','-')}_{name}"
+    atomic_write_bytes(target, content)
+    digest = sha256_file(target)
+    extracted = extract_text(target)
+    now = utc_now()
+    with connect() as db:
+        cursor = db.execute(
+            """
+            INSERT INTO files(project_id, original_name, stored_path, media_type, size, sha256, extracted_text, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (project_id, name, str(target), upload.content_type or "application/octet-stream", len(content), digest, extracted, now),
+        )
+        db.execute("UPDATE projects SET updated_at=? WHERE id=?", (now, project_id))
+        log_activity(db, project_id, "Archivo importado", f"{name} Â· {len(content)} bytes")
+        row = db.execute("SELECT * FROM files WHERE id=?", (cursor.lastrowid,)).fetchone()
+    return dict(row)
+
+
+@app.post("/api/extract")
+async def extract_upload(upload: UploadFile = File(...)) -> dict:
+    content = await upload.read()
+    if len(content) > 100 * 1024 * 1024:
+        raise HTTPException(413, "El archivo supera el lÃ­mite de 100 MB")
+    suffix = Path(upload.filename or "archivo.txt").suffix
+    supported = {".pdf", ".docx", ".pptx", ".txt", ".md"}
+    if suffix.lower() not in supported:
+        raise HTTPException(400, "Formato no admitido. Usa PDF, DOCX, PPTX, TXT o MD.")
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(content)
+        path = Path(tmp.name)
+    try:
+        text = extract_text(path)
+    finally:
+        path.unlink(missing_ok=True)
+    if not text.strip():
+        raise HTTPException(422, "No se encontrÃ³ texto extraÃ­ble. Si el archivo contiene imÃ¡genes escaneadas, conviÃ©rtelas primero con reconocimiento de texto.")
+    if text.startswith("[No se pudo extraer el texto:"):
+        raise HTTPException(422, text.strip("[]"))
+    return {"name": upload.filename, "text": text[:250000]}
+
+
+@app.get("/api/files/{file_id}/download")
+def download_file(file_id: int) -> FileResponse:
+    with connect() as db:
+        row = db.execute("SELECT * FROM files WHERE id=?", (file_id,)).fetchone()
+    if not row or not Path(row["stored_path"]).exists():
+        raise HTTPException(404, "Archivo no encontrado")
+    return FileResponse(row["stored_path"], filename=row["original_name"])
+
+
+@app.delete("/api/files/{file_id}")
+def delete_file(file_id: int) -> dict:
+    with connect() as db:
+        row = db.execute("SELECT * FROM files WHERE id=?", (file_id,)).fetchone()
+        if not row:
+            return {"ok": True}
+        source = Path(row["stored_path"])
+        if source.exists():
+            backup = BACKUPS_DIR / str(row["project_id"]) / f"deleted_{utc_now().replace(':','-')}_{safe_filename(row['original_name'])}"
+            backup.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, backup)
+            if sha256_file(source) != sha256_file(backup):
+                raise HTTPException(500, "No se pudo verificar la copia de seguridad")
+            source.unlink()
+        db.execute("DELETE FROM files WHERE id=?", (file_id,))
+        log_activity(db, row["project_id"], "Archivo eliminado con respaldo", row["original_name"])
+    return {"ok": True}
+
+
+@app.get("/api/compare")
+def compare_files(left: int, right: int) -> dict:
+    with connect() as db:
+        a = db.execute("SELECT * FROM files WHERE id=?", (left,)).fetchone()
+        b = db.execute("SELECT * FROM files WHERE id=?", (right,)).fetchone()
+    if not a or not b:
+        raise HTTPException(404, "Selecciona dos archivos vÃ¡lidos")
+    a_text = a["extracted_text"] or ""
+    b_text = b["extracted_text"] or ""
+    diff = "\n".join(difflib.unified_diff(
+        a_text.splitlines(), b_text.splitlines(),
+        fromfile=a["original_name"], tofile=b["original_name"], lineterm=""
+    ))
+    return {
+        "left": dict(a),
+        "right": dict(b),
+        "identical_hash": a["sha256"] == b["sha256"],
+        "diff": diff[:250000],
+    }
+
+
+def build_context(project_id: int) -> str:
+    with connect() as db:
+        p = db.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
+        if not p:
+            raise HTTPException(404, "Proyecto no encontrado")
+        notes = db.execute("SELECT * FROM notes WHERE project_id=? ORDER BY updated_at DESC", (project_id,)).fetchall()
+        files = db.execute("SELECT * FROM files WHERE project_id=? ORDER BY id DESC", (project_id,)).fetchall()
+    lines = [
+        f"# Contexto del proyecto: {p['name']}", "",
+        f"CategorÃ­a: {p['category']}", f"DescripciÃ³n: {p['description']}", "",
+        "## Instrucciones permanentes", p["permanent_instructions"] or "Sin instrucciones permanentes.", "",
+        "## Notas",
+    ]
+    for note in notes:
+        lines += [f"### {note['title']}", note["body"], ""]
+    if not notes:
+        lines += ["Sin notas todavÃ­a.", ""]
+    lines += ["## Archivos disponibles"]
+    for file in files:
+        lines.append(f"- {file['original_name']} Â· SHA-256 {file['sha256']} Â· {file['size']} bytes")
+        snippet = (file["extracted_text"] or "").strip()[:2500]
+        if snippet:
+            lines += ["", f"### Extracto: {file['original_name']}", snippet, ""]
+    lines += ["", "## Regla", "Usa este contexto como fuente. SeÃ±ala los datos faltantes y no inventes fuentes."]
+    return "\n".join(lines)
+
+
+@app.get("/api/projects/{project_id}/context")
+def context_file(project_id: int) -> StreamingResponse:
+    text = build_context(project_id)
+    return StreamingResponse(
+        io.BytesIO(text.encode("utf-8")),
+        media_type="text/markdown",
+        headers={"Content-Disposition": f'attachment; filename="project-{project_id}-CONTEXT.md"'},
+    )
+
+
+@app.get("/api/projects/{project_id}/export")
+def export_project(project_id: int) -> FileResponse:
+    with connect() as db:
+        p = db.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
+        files = db.execute("SELECT * FROM files WHERE project_id=?", (project_id,)).fetchall()
+        notes = db.execute("SELECT * FROM notes WHERE project_id=?", (project_id,)).fetchall()
+    if not p:
+        raise HTTPException(404, "Proyecto no encontrado")
+    target = EXPORTS_DIR / f"{safe_filename(p['name'])}-{project_id}.zip"
+    with zipfile.ZipFile(target, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("project.json", json.dumps({"project": dict(p), "notes": [dict(n) for n in notes]}, ensure_ascii=False, indent=2))
+        archive.writestr("CONTEXT.md", build_context(project_id))
+        for file in files:
+            source = Path(file["stored_path"])
+            if source.exists():
+                archive.write(source, f"files/{safe_filename(file['original_name'])}")
+    with connect() as db:
+        log_activity(db, project_id, "Proyecto exportado", target.name)
+    return FileResponse(target, filename=target.name)
+
+
+@app.get("/api/settings")
+def get_settings() -> dict:
+    with connect() as db:
+        return {r["key"]: r["value"] for r in db.execute("SELECT * FROM settings")}
+
+
+@app.put("/api/settings")
+def update_settings(payload: SettingsIn) -> dict:
+    values = payload.model_dump(exclude_none=True)
+    with connect() as db:
+        for key, value in values.items():
+            db.execute(
+                "INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                (key, value),
+            )
+    return get_settings()
+
+
+@app.get("/api/ai/status")
+def ai_status() -> dict:
+    status = ai_provider_status()
+    providers = status.setdefault("providers", {})
+    external_ready = bool(
+        providers.get("openai", {}).get("configured")
+        or providers.get("ollama", {}).get("online")
+        or providers.get("compatible", {}).get("configured")
+    )
+    providers["local"] = {
+        "configured": True,
+        "online": True,
+        "model": "Dimitry local estructurado",
+        "web_search": False,
+    }
+    if not external_ready:
+        # Mantiene habilitada la interfaz existente mientras se incorpora la tarjeta
+        # visual del motor integrado en una versiÃ³n posterior.
+        compatible = providers.setdefault("compatible", {})
+        compatible.update({"configured": True, "embedded": True, "model": "Dimitry local estructurado", "web_search": False})
+        status["mode"] = "local integrado"
+    return status
+
+
+@app.post("/api/ai/secret")
+def ai_save_secret(payload: AISecretRequest) -> dict:
+    key_name = "openai_api_key" if payload.provider == "openai" else "compatible_api_key"
+    try:
+        set_secret(key_name, payload.api_key)
+        return ai_provider_status()
+    except Exception as exc:
+        raise HTTPException(500, f"No se pudo guardar la credencial: {exc}") from exc
+
+
+@app.delete("/api/ai/secret/{provider}")
+def ai_delete_secret(provider: str) -> dict:
+    if provider not in {"openai", "compatible"}:
+        raise HTTPException(400, "Proveedor no admitido")
+    key_name = "openai_api_key" if provider == "openai" else "compatible_api_key"
+    try:
+        delete_secret(key_name)
+        return ai_provider_status()
+    except Exception as exc:
+        raise HTTPException(500, f"No se pudo eliminar la credencial: {exc}") from exc
+
+
+@app.get("/api/ai/models/{provider}")
+def ai_models(provider: str) -> dict:
+    try:
+        if provider == "openai":
+            return {"models": ai_openai_models()}
+        if provider == "compatible":
+            return {"models": ai_compatible_models()}
+        if provider == "ollama":
+            return {"models": ai_ollama_models()}
+        raise HTTPException(400, "Proveedor no admitido")
+    except AIError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@app.get("/api/ai/threads")
+def ai_threads() -> dict:
+    with connect() as db:
+        rows = [dict(row) for row in db.execute(
+            "SELECT t.*, (SELECT COUNT(*) FROM ai_messages m WHERE m.thread_id=t.id) message_count "
+            "FROM ai_threads t ORDER BY t.updated_at DESC LIMIT 50"
+        )]
+    return {"threads": rows}
+
+
+@app.get("/api/ai/threads/{thread_id}")
+def ai_thread(thread_id: int) -> dict:
+    with connect() as db:
+        thread = db.execute("SELECT * FROM ai_threads WHERE id=?", (thread_id,)).fetchone()
+        if not thread:
+            raise HTTPException(404, "ConversaciÃ³n no encontrada")
+        messages = [dict(row) for row in db.execute(
+            "SELECT * FROM ai_messages WHERE thread_id=? ORDER BY id", (thread_id,)
+        )]
+    for message in messages:
+        try:
+            message["sources"] = json.loads(message.pop("sources_json", "[]") or "[]")
+        except json.JSONDecodeError:
+            message["sources"] = []
+    return {"thread": dict(thread), "messages": messages}
+
+
+@app.delete("/api/ai/threads/{thread_id}")
+def ai_delete_thread(thread_id: int) -> dict:
+    with connect() as db:
+        db.execute("DELETE FROM ai_threads WHERE id=?", (thread_id,))
+    return {"ok": True}
+
+
+@app.post("/api/ai/chat")
+def ai_chat(payload: AIChatRequest) -> dict:
+    now = utc_now()
+    with connect() as db:
+        thread = None
+        if payload.thread_id:
+            thread = db.execute("SELECT * FROM ai_threads WHERE id=?", (payload.thread_id,)).fetchone()
+            if not thread:
+                raise HTTPException(404, "ConversaciÃ³n no encontrada")
+            thread_id = int(thread["id"])
+        else:
+            title = re.sub(r"\s+", " ", payload.message).strip()[:68] or "Nueva conversaciÃ³n"
+            cursor = db.execute(
+                "INSERT INTO ai_threads(title,domain,created_at,updated_at) VALUES(?,?,?,?)",
+                (title, payload.domain, now, now),
+            )
+            thread_id = int(cursor.lastrowid)
+        previous_rows = [dict(row) for row in db.execute(
+            "SELECT role,content FROM ai_messages WHERE thread_id=? ORDER BY id DESC LIMIT 14",
+            (thread_id,),
+        )]
+        history = list(reversed(previous_rows))
+        db.execute(
+            "INSERT INTO ai_messages(thread_id,role,content,created_at) VALUES(?,?,?,?)",
+            (thread_id, "user", payload.message, now),
+        )
+        db.execute("UPDATE ai_threads SET domain=?,updated_at=? WHERE id=?", (payload.domain, now, thread_id))
+
+    local_results: list[dict] = []
+    context = ""
+    if payload.include_library and payload.domain != "general":
+        local_results = search_knowledge(payload.domain, payload.message, 10)
+        context = "\n\n".join(
+            f"FUENTE LOCAL: {item['title']} ({item['category']})\n{item['snippet']}"
+            for item in local_results
+        )
+
+    domain_rules = {
+        "palworld": "Eres un especialista en Palworld. Distingue fuentes oficiales, datos tÃ©cnicos del editor, guÃ­as comunitarias e inferencias. No inventes cÃ³digos internos.",
+        "gamemod": "Eres un analista tÃ©cnico de Unity, IL2CPP, Mono, Lua, Smali y dumps. Trabaja de forma reversible sobre copias propias y no facilites evasiÃ³n de pagos, DRM o anticheat.",
+        "libtool": "Eres un especialista en LibTool y Lua. Explica hallazgos, riesgos, pruebas y reversiÃ³n; no presupongas funciones que no aparecen en el dump.",
+        "research": "Eres un investigador acadÃ©mico riguroso. No inventes autores, DOI, pÃ¡ginas ni referencias; diferencia hechos, interpretaciÃ³n y puntos pendientes.",
+        "legal": "Eres un asistente de investigaciÃ³n y redacciÃ³n jurÃ­dica peruana. No inventes normas, artÃ­culos, plazos, competencia ni jurisprudencia.",
+    }
+    system = domain_rules.get(payload.domain, "Eres Dimitry AI, un asistente prÃ¡ctico, riguroso y claro. No inventes datos ni fuentes.")
+    prompt = payload.message
+    if context:
+        prompt = f"""Consulta:
+{payload.message}
+
+Biblioteca local recuperada:
+{context}
+
+Usa la biblioteca cuando sea relevante, menciona el tÃ­tulo de cada fuente local utilizada y seÃ±ala cuando la evidencia no alcance."""
+    try:
+        result = ai_generate(
+            prompt,
+            system=system,
+            purpose="code" if payload.domain in {"gamemod", "libtool"} else ("legal" if payload.domain == "legal" else ("research" if payload.web_search else "general")),
+            allow_web=payload.web_search,
+            preferred_provider=payload.provider,
+            timeout=480,
+            history=history,
+        )
+    except AIError as exc:
+        response = _embedded_assistant_answer(payload.domain, payload.message, local_results)
+        sources = [
+            {"title": item["title"], "url": "", "kind": "local", "category": item.get("category", "")}
+            for item in local_results[:8]
+        ]
+        with connect() as db:
+            db.execute(
+                "INSERT INTO ai_messages(thread_id,role,content,provider,model,sources_json,created_at) VALUES(?,?,?,?,?,?,?)",
+                (thread_id, "assistant", response, "local", "Dimitry local estructurado", json.dumps(sources, ensure_ascii=False), utc_now()),
+            )
+            db.execute("UPDATE ai_threads SET updated_at=? WHERE id=?", (utc_now(), thread_id))
+        return {
+            "thread_id": thread_id,
+            "response": response,
+            "provider": "local",
+            "model": "Dimitry local estructurado",
+            "sources": sources,
+            "warning": f"Se utilizÃ³ el motor local porque no habÃ­a un proveedor generativo externo disponible: {exc}",
+        }
+
+    sources = list(result.sources)
+    for item in local_results[:8]:
+        sources.append({"title": item["title"], "url": "", "kind": "local", "category": item.get("category", "")})
+    with connect() as db:
+        db.execute(
+            "INSERT INTO ai_messages(thread_id,role,content,provider,model,sources_json,created_at) VALUES(?,?,?,?,?,?,?)",
+            (thread_id, "assistant", result.text, result.provider, result.model, json.dumps(sources, ensure_ascii=False), utc_now()),
+        )
+        db.execute("UPDATE ai_threads SET updated_at=? WHERE id=?", (utc_now(), thread_id))
+    return {"thread_id": thread_id, **result.as_dict(), "sources": sources}
+
+
+def _embedded_assistant_answer(domain: str, message: str, results: list[dict]) -> str:
+    """Respuesta transparente y Ãºtil cuando no existe una IA generativa externa."""
+    if results:
+        lines = ["Respuesta elaborada con la biblioteca local de Dimitry Hub:", ""]
+        for index, item in enumerate(results[:6], start=1):
+            title = re.sub(r"\s+", " ", str(item.get("title") or "Fuente local")).strip()
+            snippet = re.sub(r"\s+", " ", str(item.get("snippet") or "")).strip()
+            lines.extend([f"{index}. {title}", snippet[:600] or "La entrada no contiene un resumen legible.", ""])
+        lines.append("La coincidencia de texto orienta la revisiÃ³n, pero no reemplaza la comprobaciÃ³n del archivo o fuente original.")
+        return "\n".join(lines)
+
+    if domain == "legal":
+        return (
+            "Dimitry Hub estÃ¡ en modo local. Para preparar un borrador jurÃ­dico peruano sin inventar datos, usa Estudio > Escritos jurÃ­dicos y completa: tipo de documento, autoridad, identidad, domicilio, fecha, sumilla, petitorio, hechos y anexos. "
+            "Las normas y plazos deben verificarse en una fuente oficial antes de presentar el escrito."
+        )
+    if domain == "research":
+        return (
+            "Dimitry Hub estÃ¡ en modo local y no encontrÃ³ una fuente suficiente en la biblioteca. Puedes avanzar con este control: delimita la pregunta, define palabras clave, busca DOI o fuentes oficiales, registra autor y fecha, contrasta al menos dos fuentes y audita las referencias antes de redactar. "
+            "No presentarÃ© autores, DOI ni resultados como reales sin verificarlos."
+        )
+    if domain in {"gamemod", "libtool"}:
+        return (
+            "Dimitry Hub estÃ¡ en modo local. Para un anÃ¡lisis tÃ©cnico verificable, importa un ZIP o usa el analizador Lua de Game Lab. Trabaja sobre una copia, identifica versiÃ³n y entorno, registra cada cambio y prepara una forma de restauraciÃ³n. "
+            "Sin un dump o archivo concreto no inventarÃ© clases, direcciones, funciones ni patrones."
+        )
+    if domain == "palworld":
+        return (
+            "No encontrÃ© una coincidencia suficiente en la biblioteca local de Palworld. Prueba con el nombre exacto del Pal, habilidad, pasiva, archivo o cÃ³digo interno, o abre Palworld Wiki para consultar el material sincronizado."
+        )
+    return (
+        "Dimitry AI estÃ¡ funcionando con el motor local integrado, pero no hay un modelo generativo externo configurado. Puedo organizar archivos en fichas, crear monografÃ­as y escritos, revisar la biblioteca de Palworld y analizar Lua o ZIP desde sus herramientas especializadas. "
+        "Para una respuesta generativa abierta de mayor alcance, configura OpenAI API, Ollama o un endpoint compatible en Ajustes."
+    )
+
+
+def _ai_call(
+    prompt: str,
+    *,
+    system: str = "",
+    purpose: str = "general",
+    allow_web: bool = False,
+    allowed_domains: list[str] | None = None,
+    preferred_provider: str | None = None,
+    timeout: int = 360,
+    history: list[dict[str, str]] | None = None,
+) -> dict:
+    try:
+        return ai_generate(
+            prompt,
+            system=system,
+            purpose=purpose,
+            allow_web=allow_web,
+            allowed_domains=allowed_domains,
+            preferred_provider=preferred_provider,
+            timeout=timeout,
+            history=history,
+        ).as_dict()
+    except AIError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+def _ollama_call(prompt: str, model: str | None = None, system: str | None = None, timeout: int = 240) -> dict:
+    """Compatibilidad interna con versiones anteriores; fuerza Ollama cuando se solicita."""
+    try:
+        result = ai_generate(
+            prompt,
+            system=system or "",
+            purpose="general",
+            preferred_provider="ollama",
+            timeout=timeout,
+        )
+        return result.as_dict()
+    except AIError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@app.get("/api/ollama/models")
+def ollama_models() -> dict:
+    return {"models": ai_ollama_models()}
+
+
+@app.post("/api/ollama/generate")
+def ollama_generate(payload: OllamaRequest) -> dict:
+    try:
+        result = ai_generate(
+            payload.prompt,
+            system=payload.system or "",
+            preferred_provider="ollama",
+        )
+        return result.as_dict()
+    except AIError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@app.post("/api/study/generate")
+def study_generate(payload: StudyRequest) -> dict:
+    templates = {
+        "ficha": "Crea una ficha de estudio completa, jerÃ¡rquica, detallada y fÃ¡cil de repasar. Conserva definiciones, clasificaciones, requisitos, procedimientos, excepciones y ejemplos.",
+        "simple": "ExplÃ­calo desde cero, paso a paso, con palabras sencillas, ejemplos y comprobaciones de comprensiÃ³n.",
+        "exam": "Crea un simulacro con 20 preguntas abiertas, respuestas modelo, posibles repreguntas y errores frecuentes.",
+        "speech": "Crea un guion oral natural y profesional, dividido por tiempos, con frases que pueda decir y posibles preguntas del docente.",
+        "cards": "Crea tarjetas de memoria en formato Pregunta | Respuesta, sin omitir conceptos importantes.",
+        "outline": "Ordena el material como un libro de estudio con tÃ­tulos, subtÃ­tulos, cuadros y conexiones entre conceptos.",
+    }
+    try:
+        baseline = generate_study_material(payload.kind, payload.content)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
+    instruction = templates.get(payload.kind, templates["ficha"])
+    context = ""
+    if payload.project_id:
+        context = build_context(payload.project_id)[:35000]
+    prompt = f"""{instruction}
+
+Reglas:
+- Responde en espaÃ±ol.
+- No inventes normas, fuentes ni datos.
+- SeÃ±ala claramente lo dudoso o faltante.
+- Usa tÃ­tulos en negro/negrita cuando el contenido se exporte; no dependas de colores.
+
+Contexto del proyecto:
+{context}
+
+Contenido principal:
+{payload.content}
+"""
+    try:
+        result = _ai_call(
+            prompt,
+            system="Eres un tutor acadÃ©mico riguroso, claro y orientado a exÃ¡menes. Conserva la fidelidad al material proporcionado y separa con claridad temas, conceptos y preguntas de repaso.",
+            purpose="study",
+            allow_web=payload.use_web,
+        )
+        if not result.get("response", "").strip():
+            raise HTTPException(503, "La IA no devolviÃ³ contenido")
+        result.update({"word_count": baseline["word_count"], "section_count": baseline["section_count"], "kind": baseline["kind"]})
+        return result
+    except HTTPException as exc:
+        return {
+            **baseline,
+            "provider": "local",
+            "model": "generador estructurado sin conexiÃ³n",
+            "sources": [],
+            "warning": f"Se utilizÃ³ el generador local porque la IA no estaba disponible: {exc.detail}",
+        }
+
+
+def _deterministic_monograph_structure(content: str) -> str:
+    """Organiza material sin insertar instrucciones o datos inventados."""
+    text = content.replace("\\r\\n", "\n").replace("\\n", "\n").strip()
+    if re.search(r"(?im)^(?:#{1,3}\s+|\d+(?:\.\d+){0,2}[.)]?\s+|INTRODUCCIÃ“N\s*$)", text):
+        return text
+    paragraphs = [part.strip() for part in re.split(r"\n\s*\n", text) if part.strip()]
+    if len(paragraphs) >= 2:
+        intro = paragraphs[0]
+        development = "\n\n".join(paragraphs[1:])
+    else:
+        sentences = re.split(r"(?<=[.!?])\s+", text, maxsplit=1)
+        intro = sentences[0]
+        development = sentences[1] if len(sentences) > 1 else text
+    return f"# IntroducciÃ³n\n\n{intro}\n\n# Desarrollo\n\n{development}"
+
+
+@app.post("/api/monographs/prepare")
+def prepare_monograph(payload: MonographRequest) -> dict:
+    structured = _deterministic_monograph_structure(payload.content)
+    warning = ""
+    ai_info: dict = {}
+    if payload.use_ai:
+        prompt = f"""Estructura el siguiente contenido como una monografÃ­a acadÃ©mica en espaÃ±ol y devuelve Ãºnicamente el cuerpo listo para Word usando encabezados Markdown #, ## y ###.
+
+Requisitos:
+- Conserva toda la informaciÃ³n Ãºtil y elimina repeticiones evidentes.
+- Incluye IntroducciÃ³n, desarrollo jerÃ¡rquico, Conclusiones y Recomendaciones cuando correspondan.
+- Usa citas parentÃ©ticas APA 7 solo cuando puedan deducirse con seguridad de la bibliografÃ­a entregada.
+- No inventes autores, aÃ±os, pÃ¡ginas, DOI, normas ni referencias.
+- Cuando falte el respaldo de una afirmaciÃ³n que requiere fuente, coloca [cita pendiente].
+- Los tÃ­tulos deben pensarse en negro, negrita y sin estilo azul.
+- No incluyas portada, Ã­ndice ni lista de referencias; la aplicaciÃ³n los agrega.
+
+BibliografÃ­a disponible:
+{payload.bibliography}
+
+Contenido:
+{payload.content}
+"""
+        try:
+            result = _ai_call(
+                prompt,
+                system="Eres un editor acadÃ©mico experto en APA 7 y metodologÃ­a universitaria.",
+                purpose="research",
+                allow_web=payload.use_web,
+                timeout=420,
+            )
+            ai_info = result
+            if result.get("response", "").strip():
+                structured = result["response"].strip()
+        except HTTPException as exc:
+            warning = exc.detail
+    metadata = payload.model_dump(exclude={"content", "bibliography", "use_ai", "use_web"})
+    target = create_monograph_docx(metadata, structured, payload.bibliography)
+    now = utc_now()
+    with connect() as db:
+        cursor = db.execute(
+            """
+            INSERT INTO monographs(title,metadata_json,source_text,bibliography,structured_text,output_path,created_at,updated_at)
+            VALUES(?,?,?,?,?,?,?,?)
+            """,
+            (payload.title, json.dumps(metadata, ensure_ascii=False), payload.content, payload.bibliography, structured, str(target), now, now),
+        )
+        monograph_id = cursor.lastrowid
+    return {
+        "id": monograph_id,
+        "structured_text": structured,
+        "download_url": f"/api/generated/{target.name}",
+        "filename": target.name,
+        "warning": warning,
+        "provider": ai_info.get("provider", ""),
+        "model": ai_info.get("model", ""),
+        "sources": ai_info.get("sources", []),
+    }
+
+
+@app.post("/api/legal/create")
+def legal_create(payload: LegalRequest) -> dict:
+    kind = payload.kind.replace("-", "_")
+    fields = {key: str(value).strip() for key, value in payload.fields.items()}
+    common_required = {
+        "authority": "autoridad, entidad u organizaciÃ³n",
+        "applicant": "nombre de la persona solicitante o responsable",
+        "address": "domicilio o lugar",
+        "city_date": "ciudad y fecha",
+        "sumilla": "sumilla u objeto",
+    }
+    missing = [label for key, label in common_required.items() if not fields.get(key)]
+    if kind == "acta_reunion":
+        if not fields.get("participants"):
+            missing.append("participantes")
+        if not payload.request_text.strip():
+            missing.append("agenda")
+        if not payload.facts.strip():
+            missing.append("desarrollo de la reuniÃ³n")
+        if not payload.evidence.strip():
+            missing.append("acuerdos")
+    else:
+        dni = re.sub(r"\D", "", fields.get("dni", ""))
+        if len(dni) != 8:
+            missing.append("DNI de ocho dÃ­gitos")
+        else:
+            fields["dni"] = dni
+        if not payload.request_text.strip():
+            missing.append("petitorio")
+        if not payload.facts.strip():
+            missing.append("fundamentos de hecho")
+        if kind == "poder_simple":
+            proxy_dni = re.sub(r"\D", "", fields.get("proxy_dni", ""))
+            if not fields.get("proxy_name"):
+                missing.append("nombre de la persona apoderada")
+            if len(proxy_dni) != 8:
+                missing.append("DNI de ocho dÃ­gitos de la persona apoderada")
+            else:
+                fields["proxy_dni"] = proxy_dni
+    if missing:
+        raise HTTPException(422, "Completa antes de generar: " + ", ".join(missing) + ".")
+
+    if kind == "acta_reunion":
+        parts = [
+            ("AGENDA", payload.request_text),
+            ("DESARROLLO DE LA REUNIÃ“N", payload.facts),
+            ("ACUERDOS", payload.evidence),
+            ("BASE LEGAL O DOCUMENTAL", payload.legal_basis),
+        ]
+    elif kind == "carta_notarial":
+        parts = [
+            ("REQUERIMIENTO", payload.request_text),
+            ("ANTECEDENTES", payload.facts),
+            ("FUNDAMENTO", payload.legal_basis),
+            ("DOCUMENTOS QUE SE ACOMPAÃ‘AN", payload.evidence),
+        ]
+    elif kind == "poder_simple":
+        parts = [
+            ("ALCANCE DEL PODER", payload.request_text),
+            ("FACULTADES OTORGADAS", payload.facts),
+            ("BASE LEGAL O DOCUMENTAL", payload.legal_basis),
+            ("DOCUMENTOS QUE SE ACOMPAÃ‘AN", payload.evidence),
+        ]
+    elif kind == "denuncia":
+        parts = [
+            ("OBJETO DE LA DENUNCIA", payload.request_text),
+            ("FUNDAMENTOS DE HECHO", payload.facts),
+            ("FUNDAMENTOS DE DERECHO", payload.legal_basis),
+            ("MEDIOS PROBATORIOS Y ANEXOS", payload.evidence),
+        ]
+    else:
+        parts = [
+            ("PETITORIO", payload.request_text),
+            ("FUNDAMENTOS DE HECHO", payload.facts),
+            ("FUNDAMENTOS DE DERECHO", payload.legal_basis),
+            ("MEDIOS PROBATORIOS Y ANEXOS", payload.evidence),
+        ]
+    populated_parts = [(heading, content.strip()) for heading, content in parts if content.strip()]
+    expected_sections = ", ".join(heading.title() for heading, _ in populated_parts)
+    roman = ("I", "II", "III", "IV")
+    draft = "\n".join(
+        item
+        for index, (heading, content) in enumerate(populated_parts)
+        for item in (f"{roman[index]}. {heading}", content)
+    )
+    warning = ""
+    ai_info: dict = {}
+    if payload.use_ai:
+        prompt = f"""Redacta un borrador jurÃ­dico peruano del tipo '{payload.kind}'.
+
+Reglas estrictas:
+- Usa Ãºnicamente los hechos, petitorio, normas y pruebas proporcionados.
+- No inventes artÃ­culos, jurisprudencia, plazos, competencias ni datos personales.
+- Omite cualquier secciÃ³n opcional que no tenga contenido; no insertes instrucciones ni marcadores internos.
+- Conserva estas secciones y no aÃ±adas otras: {expected_sections}.
+- Tono formal, claro y directo.
+- Este es un borrador para revisiÃ³n profesional.
+
+Petitorio:
+{payload.request_text}
+
+Hechos:
+{payload.facts}
+
+Fundamento legal proporcionado:
+{payload.legal_basis}
+
+Pruebas y anexos:
+{payload.evidence}
+"""
+        try:
+            result = _ai_call(
+                prompt,
+                system="Eres un asistente de redacciÃ³n jurÃ­dica peruana. Nunca inventas una norma. Distingue claramente entre norma verificada, dato aportado y punto pendiente.",
+                purpose="legal",
+                allow_web=payload.verify_web,
+                allowed_domains=["gob.pe", "pj.gob.pe", "tc.gob.pe", "congreso.gob.pe", "elperuano.pe"],
+                timeout=360,
+            )
+            ai_info = result
+            if result.get("response", "").strip():
+                draft = result["response"].strip()
+        except HTTPException as exc:
+            warning = exc.detail
+    target = create_legal_docx(kind, fields, draft)
+    return {
+        "draft": draft,
+        "download_url": f"/api/generated/{target.name}",
+        "filename": target.name,
+        "warning": warning,
+        "provider": ai_info.get("provider", ""),
+        "model": ai_info.get("model", ""),
+        "sources": ai_info.get("sources", []),
+    }
+
+
+@app.get("/api/generated/{filename}")
+def download_generated(filename: str) -> FileResponse:
+    target = GENERATED_DIR / safe_filename(filename)
+    if not target.exists():
+        raise HTTPException(404, "Documento generado no encontrado")
+    return FileResponse(target, filename=target.name)
+
+
+@app.post("/api/gamemod/lua/analyze")
+async def gamemod_lua_analyze(upload: UploadFile = File(...)) -> dict:
+    if not upload.filename or Path(upload.filename).suffix.lower() != ".lua":
+        raise HTTPException(400, "Selecciona un archivo con extensiÃ³n .lua")
+    content = await upload.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(413, "El archivo Lua supera el lÃ­mite de 5 MB")
+    try:
+        source = content.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        source = content.decode("latin-1")
+    try:
+        return analyze_lua_source(source, safe_filename(upload.filename))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+
+@app.post("/api/gamemod/lua/generate")
+def gamemod_lua_generate(payload: LuaGenerateRequest) -> dict:
+    try:
+        script = generate_gameguardian_script(payload.name, payload.author, payload.description, payload.changes)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
+    base_name = safe_filename(Path(payload.name).stem).strip(" .") or "script-gameguardian"
+    target = GENERATED_DIR / safe_filename(f"{base_name}-{utc_now().replace(':', '-')}.lua")
+    atomic_write_bytes(target, script.encode("utf-8"))
+    return {
+        "filename": target.name,
+        "download_url": f"/api/generated/{target.name}",
+        "preview": script,
+        "actions": len([line for line in payload.changes.splitlines() if line.strip() and not line.lstrip().startswith(("#", "--"))]),
+    }
+
+
+@app.get("/api/knowledge/{domain}/summary")
+def knowledge_summary(domain: str) -> dict:
+    return source_summary(domain)
+
+
+@app.get("/api/knowledge/{domain}/search")
+def knowledge_search(domain: str, q: str, limit: int = 12) -> dict:
+    return {"results": search_knowledge(domain, q, max(1, min(limit, 30)))}
+
+
+@app.post("/api/knowledge/{domain}/upload")
+async def knowledge_upload(domain: str, upload: UploadFile = File(...), name: str = Form("")) -> dict:
+    if not upload.filename or Path(upload.filename).suffix.lower() != ".zip":
+        raise HTTPException(400, "Sube un archivo ZIP")
+    content = await upload.read()
+    if len(content) > 800 * 1024 * 1024:
+        raise HTTPException(413, "El ZIP supera el lÃ­mite de 800 MB")
+    temp_dir = KNOWLEDGE_DIR / "incoming"
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    temp_path = temp_dir / f"{utc_now().replace(':','-')}_{safe_filename(upload.filename)}"
+    atomic_write_bytes(temp_path, content)
+    try:
+        result = import_bundle(temp_path, domain=domain, display_name=name or upload.filename)
+        analysis = analyze_bundle(Path(result["extract_dir"]))
+        result["analysis"] = analysis
+        return result
+    except zipfile.BadZipFile:
+        raise HTTPException(400, "El archivo no es un ZIP vÃ¡lido")
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+@app.get("/api/palworld/workspace/status")
+def palworld_workspace_status(check_online: bool = False) -> dict:
+    try:
+        return {"editor": editor_status(check_online), "sessions": list_sessions()}
+    except RuntimeError as exc:
+        return {"editor": {**editor_status(False), "online_error": str(exc)}, "sessions": list_sessions()}
+
+
+@app.post("/api/palworld/workspace/upload")
+async def palworld_workspace_upload(
+    upload: UploadFile = File(...), expected_kind: str = Form("auto"),
+) -> dict:
+    if not upload.filename:
+        raise HTTPException(400, "Selecciona un archivo")
+    ensure_workspace_dirs()
+    temp_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, dir=INCOMING_DIR, suffix=".part") as temp:
+            temp_path = Path(temp.name)
+            total = 0
+            while True:
+                chunk = await upload.read(1024 * 1024)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > MAX_UPLOAD_BYTES:
+                    raise HTTPException(413, "El archivo supera el lÃ­mite de 2 GB")
+                temp.write(chunk)
+        return create_session_from_path(temp_path, upload.filename, expected_kind)
+    except HTTPException:
+        raise
+    except (ValueError, zipfile.BadZipFile) as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(500, f"No se pudo preparar el guardado: {exc}") from exc
+    finally:
+        if temp_path and temp_path.exists():
+            temp_path.unlink(missing_ok=True)
+
+
+@app.get("/api/palworld/workspace/sessions")
+def palworld_workspace_sessions() -> dict:
+    return {"sessions": list_sessions()}
+
+
+@app.delete("/api/palworld/workspace/sessions/{session_id}")
+def palworld_workspace_delete(session_id: str) -> dict:
+    try:
+        delete_session(session_id)
+        return {"deleted": True}
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@app.get("/api/palworld/workspace/sessions/{session_id}/download")
+def palworld_workspace_download(session_id: str, variant: str = "backup") -> FileResponse:
+    try:
+        target = session_file(session_id, variant)
+        return FileResponse(target, filename=target.name)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@app.post("/api/palworld/workspace/sessions/{session_id}/restore")
+def palworld_workspace_restore(session_id: str) -> dict:
+    try:
+        return {"restored": True, "session": restore_session(session_id)}
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@app.post("/api/palworld/workspace/sessions/{session_id}/open-folder")
+def palworld_workspace_open_folder(session_id: str) -> dict:
+    try:
+        return open_session_folder(session_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@app.post("/api/palworld/editor/install")
+def palworld_editor_install() -> dict:
+    try:
+        return install_editor_latest()
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@app.post("/api/palworld/editor/launch")
+def palworld_editor_launch(payload: PalEditorLaunchRequest) -> dict:
+    try:
+        return launch_editor(payload.session_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@app.get("/api/palworld/perfect-pals/status")
+def palworld_perfect_pals_status() -> dict:
+    return perfect_pals_status()
+
+
+@app.post("/api/palworld/perfect-pals/generate")
+def palworld_perfect_pals_generate(payload: PerfectPalsRequest) -> dict:
+    try:
+        return generate_profile_packages(refresh=payload.refresh_catalog)
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@app.get("/api/palworld/perfect-pals/download/{generation_id}/{file_key}")
+def palworld_perfect_pals_download(generation_id: str, file_key: str) -> FileResponse:
+    try:
+        target, name = generation_download(generation_id, file_key)
+        return FileResponse(target, filename=name)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@app.post("/api/palworld/sync")
+def sync_palworld() -> dict:
+    """Compatibilidad con v0.4: ahora ejecuta el centro completo de sincronizaciÃ³n."""
+    return run_full_sync("palworld-button")
+
+
+@app.post("/api/palworld/sync-news")
+def sync_palworld_news() -> dict:
+    return run_full_sync("palworld-news-button")
+
+
+@app.post("/api/sync/all")
+def sync_all() -> dict:
+    return run_full_sync("manual")
+
+
+@app.get("/api/sync/status")
+def get_sync_status() -> dict:
+    return sync_status()
+
+
+@app.post("/api/research/web-import")
+def research_web_import(payload: WebImportRequest) -> dict:
+    try:
+        return import_web_source(payload.url, payload.domain, payload.title)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc))
+
+
+@app.post("/api/research/crossref/search")
+def research_crossref_search(payload: CrossrefSearchRequest) -> dict:
+    try:
+        return {"results": crossref_search(payload.query, payload.rows)}
+    except (RuntimeError, ValueError) as exc:
+        raise HTTPException(503, str(exc))
+
+
+@app.get("/api/research/crossref/doi")
+def research_crossref_doi(doi: str) -> dict:
+    if not doi.strip():
+        raise HTTPException(400, "Escribe un DOI")
+    try:
+        return crossref_doi(doi)
+    except (RuntimeError, ValueError) as exc:
+        raise HTTPException(503, str(exc))
+
+
+@app.post("/api/research/items")
+def research_save(payload: ResearchSaveRequest) -> dict:
+    return save_research_item(payload.item)
+
+
+@app.get("/api/research/items")
+def research_list(limit: int = 100) -> dict:
+    return {"items": list_research_items(limit)}
+
+
+@app.post("/api/research/audit")
+def research_audit(payload: BibliographyAuditRequest) -> dict:
+    return bibliography_audit(payload.content, payload.bibliography)
+
+
+@app.post("/api/research/suggest")
+def research_suggest(payload: AutoResearchRequest) -> dict:
+    try:
+        return suggest_academic_sources(payload.title, payload.content, payload.rows)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc))
+
+
+@app.post("/api/knowledge/ask")
+def knowledge_ask(payload: KnowledgeQuestion) -> dict:
+    results = search_knowledge(payload.domain, payload.question, 10)
+    if payload.domain == "palworld":
+        live_results = search_live_catalog(payload.question, 5)
+        existing = {item.get("source_key") for item in live_results}
+        results = (live_results + [item for item in results if item.get("source_key") not in existing])[:10]
+    local_answer = offline_knowledge_answer(payload.question, results)
+    if not results:
+        return {"answer": local_answer, "results": [], "offline": True}
+
+    status = ai_provider_status()
+    providers = status.get("providers", {}) if isinstance(status, dict) else {}
+    ai_ready = bool(
+        providers.get("openai", {}).get("configured")
+        or providers.get("ollama", {}).get("online")
+        or providers.get("compatible", {}).get("configured")
+    )
+    if not ai_ready:
+        return {
+            "answer": local_answer,
+            "results": results,
+            "offline": True,
+            "warning": "Respuesta generada directamente desde la biblioteca local; no hay un proveedor de IA configurado.",
+        }
+
+    context = "\n\n".join(
+        f"FUENTE: {item['title']} ({item['category']})\n{item['snippet']}"
+        for item in results
+    )
+    domain_rules = {
+        "palworld": "Responde sobre Palworld usando el material local. Distingue datos confirmados de inferencias y no inventes cÃ³digos internos.",
+        "gamemod": "Ayuda a analizar mods, dumps, LibTool, Unity y Lua de forma tÃ©cnica y reversible.",
+        "libtool": "Ayuda con LibTool, dumps y Lua de manera reversible y segura.",
+    }
+    system = domain_rules.get(payload.domain, "Responde usando exclusivamente el contexto local recuperado.")
+    prompt = f"""Pregunta del usuario:
+{payload.question}
+
+Contexto local recuperado:
+{context}
+
+Contesta en espaÃ±ol, cita los tÃ­tulos usados y seÃ±ala claramente cuando la evidencia no alcance.
+"""
+    try:
+        result = _ai_call(
+            prompt, system=system,
+            purpose="code" if payload.domain in {"gamemod", "libtool"} else "general",
+            timeout=180,
+        )
+        answer = result.get("response", "").strip()
+        return {"answer": answer or local_answer, "results": results, "offline": not bool(answer)}
+    except HTTPException as exc:
+        return {
+            "answer": local_answer,
+            "results": results,
+            "offline": True,
+            "warning": f"La IA no respondiÃ³; se usÃ³ la respuesta local. {exc.detail}",
+        }
+
