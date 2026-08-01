@@ -1,6 +1,6 @@
 {
-  "version": "1.0.4",
+  "version": "1.1.0",
   "channel": "stable",
   "source_sha256": "9a343f22e8b1b5a8e2690f9cfc24d2614d4ee6596bea67e9ff2ad7429a0982e4",
-  "notes": "Corrige definitivamente la descarga técnica de Palworld Save PAL mediante enlaces directos de GitHub sin reenviar cabeceras incompatibles, añade Actualizaciones como sección visible en el menú lateral, y mejora Comprobar la aplicación para informar claramente si existe una versión nueva o si la versión instalada ya es la última, mostrando la versión actual, la última publicada y la fecha de comprobación."
+  "notes": "Reconstruye el centro Palworld para que sea realmente utilizable: añade carga directa de Level.sav, GlobalPalStorage.sav, Player .sav y ZIP completos; crea automáticamente una copia de seguridad y una sesión de trabajo; integra la instalación y apertura del editor completo Palworld Save Pal desde Dimitry Hub; permite administrar, abrir, descargar y eliminar sesiones; muestra las acciones habituales para Pals perfectos, parejas macho/hembra, Caja Pal global, jugadores, inventarios, tecnologías, mapa, misiones y guilds; las consultas de la biblioteca responden localmente aunque no exista OpenAI ni Ollama; evita sincronizaciones duplicadas y deja de descargar todo el código fuente del editor en cada revisión, comprobando solo su versión oficial."
 }
