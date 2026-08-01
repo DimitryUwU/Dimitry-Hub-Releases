@@ -67,7 +67,9 @@ jobs:
 
       - name: Apply product fixes
         shell: pwsh
-        run: python patches/apply.py build/src
+        run: |
+          python patches/apply.py build/src
+          python patches/apply_v104.py build/src
 
       - name: Install build dependencies
         shell: pwsh
