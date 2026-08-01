@@ -154,7 +154,7 @@ jobs:
           $config.notes | Set-Content release-notes.txt -Encoding utf8
 
       - name: Publish GitHub release
-        if: github.event_name == 'workflow_dispatch' && inputs.publicar == 'PUBLICAR'
+        if: (github.event_name == 'workflow_dispatch' && inputs.publicar == 'PUBLICAR') || (github.event_name == 'push' && contains(github.event.head_commit.message, '[PUBLICAR]'))
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -165,7 +165,7 @@ jobs:
           gh release create $env:RELEASE_TAG build/src/release/Dimitry_Hub_Setup_x64.exe build/src/checksums.sha256 build/src/latest.json --title "Dimitry Hub $env:RELEASE_TAG" --notes-file build/src/release-notes.txt --latest
 
       - name: Publish latest manifest on main
-        if: github.event_name == 'workflow_dispatch' && inputs.publicar == 'PUBLICAR'
+        if: (github.event_name == 'workflow_dispatch' && inputs.publicar == 'PUBLICAR') || (github.event_name == 'push' && contains(github.event.head_commit.message, '[PUBLICAR]'))
         shell: pwsh
         run: |
           Copy-Item build/src/latest.json latest.json -Force
