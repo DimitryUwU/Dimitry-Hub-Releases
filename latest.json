@@ -1,7 +1,7 @@
 {
-  "version": "1.1.0",
-  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.1.0/Dimitry_Hub_Setup_x64.exe",
-  "sha256": "8300d7b13a40715f41955bbadc20b38042f930f8cbe632cbf3cf873cadc38715",
+  "version": "1.1.1",
+  "installer_url": "https://github.com/DimitryUwU/Dimitry-Hub-Releases/releases/download/v1.1.1/Dimitry_Hub_Setup_x64.exe",
+  "sha256": "daa588bb8202f21b831c7cbc2a6e3e6814e7616a9faa4673831797468473e4a4",
   "notes": "Reconstruye el centro Palworld para que sea realmente utilizable: añade carga directa de Level.sav, GlobalPalStorage.sav, Player .sav y ZIP completos; crea automáticamente una copia de seguridad y una sesión de trabajo; integra la instalación y apertura del editor completo Palworld Save Pal desde Dimitry Hub; permite administrar, abrir, descargar y eliminar sesiones; muestra las acciones habituales para Pals perfectos, parejas macho/hembra, Caja Pal global, jugadores, inventarios, tecnologías, mapa, misiones y guilds; las consultas de la biblioteca responden localmente aunque no exista OpenAI ni Ollama; evita sincronizaciones duplicadas y deja de descargar todo el código fuente del editor en cada revisión, comprobando solo su versión oficial.",
-  "published_at": "2026-08-01T05:08:12.1202997Z"
+  "published_at": "2026-08-01T09:10:35.9661898Z"
 }
