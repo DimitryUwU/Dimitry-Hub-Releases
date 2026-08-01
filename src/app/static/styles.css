@@ -79,3 +79,51 @@ body[data-theme="midnight-modern"]{--bg:#0b0e17;--surface:#111827;--surface-2:#1
 .power-badge,.chip,.thread-item,.provider-card,.power-preset,.search input,.sync-mini,.list-row{border-radius:18px}.notice.info{background:color-mix(in srgb,var(--surface-2) 90%,transparent);border:1px solid color-mix(in srgb,var(--yellow) 16%,var(--line))}
 body[data-theme="arcane-royal"] .page-title small,body[data-theme="arcane-royal"] .section-head p,body[data-theme="arcane-royal"] .panel-head p,body[data-theme="arcane-royal"] .launch-card p,body[data-theme="arcane-royal"] .list-row p,body[data-theme="arcane-royal"] .list-row small,body[data-theme="arcane-royal"] .project-body p{color:#7b685f}
 .online-pill{background:color-mix(in srgb,var(--surface-2) 95%,transparent);border:1px solid color-mix(in srgb,var(--yellow) 14%,var(--line))}
+
+/* Respuesta visual y sonora de estilo consola, con controles accesibles. */
+.file-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px;border:1px dashed color-mix(in srgb,var(--purple) 38%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--surface-2) 88%,transparent)}
+.file-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.file-picker small{color:var(--muted);font-weight:800;overflow-wrap:anywhere}
+.experience-controls{margin-top:18px;padding:15px;border:1px solid color-mix(in srgb,var(--yellow) 25%,var(--line));border-radius:19px;background:linear-gradient(145deg,color-mix(in srgb,var(--purple) 9%,var(--surface-2)),color-mix(in srgb,var(--yellow) 7%,var(--surface)))}
+.experience-controls h3{margin:0 0 5px}.experience-controls p{margin:0 0 12px;color:var(--muted);font-size:12px;font-weight:800}.experience-controls .check+.check{margin-top:8px}
+.btn,.nav-item,.launch-card,.theme-card,.font-card,.power-preset,.chip,.tab,.sync-mini,.icon-btn{will-change:transform;transition:transform .18s cubic-bezier(.2,.85,.3,1.25),box-shadow .18s,border-color .18s,filter .18s}
+.btn:hover,.nav-item:hover,.theme-card:hover,.font-card:hover,.power-preset:hover,.chip:hover,.tab:hover,.sync-mini:hover,.icon-btn:hover{filter:brightness(1.06)}
+.launch-card:hover{transform:translateY(-6px) scale(1.012);box-shadow:0 22px 45px color-mix(in srgb,var(--purple) 18%,transparent)}
+.btn:focus-visible,.nav-item:focus-visible,.launch-card:focus-visible,.theme-card:focus-visible,.font-card:focus-visible,.chip:focus-visible,.tab:focus-visible{outline:3px solid color-mix(in srgb,var(--yellow) 72%,white);outline-offset:3px}
+.notice.good,.toast.ok{animation:ui-pop .32s cubic-bezier(.2,.9,.3,1.35)}
+.notice.bad,.toast.error{animation:ui-shake .28s ease-out}
+@keyframes ui-pop{0%{transform:scale(.96);opacity:.35}100%{transform:scale(1);opacity:1}}
+@keyframes ui-shake{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}65%{transform:translateX(4px)}}
+body[data-motion="off"] *,body[data-motion="off"] *:before,body[data-motion="off"] *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){body:not([data-motion="on"]) *,body:not([data-motion="on"]) *:before,body:not([data-motion="on"]) *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+/* Cada tema es una experiencia completa: formal, arcana o de aventura. */
+.theme-card small{display:block;margin-top:5px;line-height:1.35;color:var(--muted)}
+body[data-theme="obsidian-gold"]{background-image:linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);background-size:32px 32px}
+body[data-theme="obsidian-gold"] .panel,body[data-theme="obsidian-gold"] .project-card,body[data-theme="obsidian-gold"] .launch-card,body[data-theme="obsidian-gold"] .stat-card,body[data-theme="obsidian-gold"] .source-card{border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.22)}
+body[data-theme="obsidian-gold"] .btn,body[data-theme="obsidian-gold"] .chip,body[data-theme="obsidian-gold"] .tab,body[data-theme="obsidian-gold"] input,body[data-theme="obsidian-gold"] select,body[data-theme="obsidian-gold"] textarea{border-radius:8px}
+body[data-theme="obsidian-gold"] .btn.primary{background:linear-gradient(180deg,#755482,#573c62);border:1px solid #9470a0;box-shadow:0 5px 14px rgba(0,0,0,.2)}
+body[data-theme="obsidian-gold"] .hero{border-radius:16px;background:linear-gradient(115deg,#15121a,#201925 58%,#18131c);border-left:4px solid var(--yellow)}
+body[data-theme="obsidian-gold"] .hero h2,body[data-theme="obsidian-gold"] .page-title h1,body[data-theme="obsidian-gold"] .panel h2{letter-spacing:-.02em}
+body[data-theme="obsidian-gold"] .nav-item.active{border-radius:8px;border-left:3px solid var(--yellow);box-shadow:none}
+body[data-theme="obsidian-gold"] .btn:hover,body[data-theme="obsidian-gold"] .launch-card:hover,body[data-theme="obsidian-gold"] .theme-card:hover{transform:translateY(-2px);filter:brightness(1.04)}
+
+body[data-theme="arcane-royal"]{background-image:radial-gradient(circle at 10% 10%,rgba(171,99,244,.09),transparent 26%),radial-gradient(circle at 88% 78%,rgba(184,138,72,.12),transparent 28%)}
+body[data-theme="arcane-royal"] .panel,body[data-theme="arcane-royal"] .project-card,body[data-theme="arcane-royal"] .launch-card,body[data-theme="arcane-royal"] .stat-card,body[data-theme="arcane-royal"] .source-card{border-radius:24px;box-shadow:0 12px 28px rgba(82,55,28,.1),inset 0 1px rgba(255,255,255,.7)}
+body[data-theme="arcane-royal"] .panel:before,body[data-theme="arcane-royal"] .launch-card:after{content:"";position:absolute;inset:5px;border:1px solid rgba(184,138,72,.18);border-radius:inherit;pointer-events:none}
+body[data-theme="arcane-royal"] .panel,body[data-theme="arcane-royal"] .launch-card{position:relative;overflow:hidden}
+body[data-theme="arcane-royal"] .btn{border-radius:18px;box-shadow:0 6px 14px rgba(97,63,28,.1)}
+body[data-theme="arcane-royal"] .btn.primary{background:linear-gradient(145deg,#8d5bd2,#bd5aa5 58%,#c49a55)}
+body[data-theme="arcane-royal"] .hero{border-radius:30px;border:1px solid #c8aa79;box-shadow:0 18px 44px rgba(88,56,25,.13),inset 0 0 0 5px rgba(255,255,255,.35)}
+body[data-theme="arcane-royal"] .nav-item.active{border-radius:20px;box-shadow:0 7px 18px rgba(139,108,230,.15)}
+body[data-theme="arcane-royal"] .btn:hover,body[data-theme="arcane-royal"] .theme-card:hover{transform:translateY(-3px) scale(1.015)}
+body[data-theme="arcane-royal"] .launch-card:hover{transform:translateY(-7px) rotate(-.25deg);box-shadow:0 20px 42px rgba(139,108,230,.18)}
+
+body[data-theme="midnight-modern"]{background-image:radial-gradient(circle at 78% 8%,rgba(35,196,232,.11),transparent 24%),radial-gradient(circle at 18% 88%,rgba(172,105,255,.12),transparent 28%)}
+body[data-theme="midnight-modern"] .panel,body[data-theme="midnight-modern"] .project-card,body[data-theme="midnight-modern"] .launch-card,body[data-theme="midnight-modern"] .stat-card,body[data-theme="midnight-modern"] .source-card{border-radius:20px;border-color:rgba(92,124,255,.3)!important;box-shadow:0 14px 35px rgba(0,0,0,.28)}
+body[data-theme="midnight-modern"] .btn{border-radius:14px;text-transform:none;letter-spacing:.01em}
+body[data-theme="midnight-modern"] .btn.primary{background:linear-gradient(120deg,#5c7cff,#ac69ff 54%,#e95fae);box-shadow:0 8px 24px rgba(92,124,255,.25)}
+body[data-theme="midnight-modern"] .hero{border-radius:24px;background:linear-gradient(125deg,#11192a,#20204a 50%,#29183f);box-shadow:0 24px 54px rgba(0,0,0,.38),0 0 34px rgba(92,124,255,.08)}
+body[data-theme="midnight-modern"] .nav-item.active{border-radius:14px;background:linear-gradient(105deg,rgba(92,124,255,.22),rgba(172,105,255,.12));box-shadow:inset 3px 0 #23c4e8,0 7px 20px rgba(0,0,0,.2)}
+body[data-theme="midnight-modern"] .btn:hover,body[data-theme="midnight-modern"] .theme-card:hover{transform:translateY(-3px) scale(1.025);filter:saturate(1.16) brightness(1.1)}
+body[data-theme="midnight-modern"] .launch-card:hover{transform:translateY(-8px) scale(1.018);box-shadow:0 22px 48px rgba(92,124,255,.22),0 0 26px rgba(35,196,232,.08)}

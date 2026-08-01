@@ -62,6 +62,9 @@ from .palworld_workspace import (
     launch_editor, list_sessions, offline_knowledge_answer, open_session_folder,
     restore_session, session_file,
 )
+from .perfect_pals import (
+    generate_profile_packages, generation_download, perfect_pals_status, search_live_catalog,
+)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -128,6 +131,10 @@ class SettingsIn(BaseModel):
 
 class PalEditorLaunchRequest(BaseModel):
     session_id: str = Field(default="", max_length=80)
+
+
+class PerfectPalsRequest(BaseModel):
+    refresh_catalog: bool = True
 
 
 class OllamaRequest(BaseModel):
@@ -1301,6 +1308,30 @@ def palworld_editor_launch(payload: PalEditorLaunchRequest) -> dict:
         raise HTTPException(400, str(exc)) from exc
 
 
+@app.get("/api/palworld/perfect-pals/status")
+def palworld_perfect_pals_status() -> dict:
+    return perfect_pals_status()
+
+
+@app.post("/api/palworld/perfect-pals/generate")
+def palworld_perfect_pals_generate(payload: PerfectPalsRequest) -> dict:
+    try:
+        return generate_profile_packages(refresh=payload.refresh_catalog)
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@app.get("/api/palworld/perfect-pals/download/{generation_id}/{file_key}")
+def palworld_perfect_pals_download(generation_id: str, file_key: str) -> FileResponse:
+    try:
+        target, name = generation_download(generation_id, file_key)
+        return FileResponse(target, filename=name)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
 @app.post("/api/palworld/sync")
 def sync_palworld() -> dict:
     """Compatibilidad con v0.4: ahora ejecuta el centro completo de sincronización."""
@@ -1378,6 +1409,10 @@ def research_suggest(payload: AutoResearchRequest) -> dict:
 @app.post("/api/knowledge/ask")
 def knowledge_ask(payload: KnowledgeQuestion) -> dict:
     results = search_knowledge(payload.domain, payload.question, 10)
+    if payload.domain == "palworld":
+        live_results = search_live_catalog(payload.question, 5)
+        existing = {item.get("source_key") for item in live_results}
+        results = (live_results + [item for item in results if item.get("source_key") not in existing])[:10]
     local_answer = offline_knowledge_answer(payload.question, results)
     if not results:
         return {"answer": local_answer, "results": [], "offline": True}
@@ -1402,7 +1437,12 @@ def knowledge_ask(payload: KnowledgeQuestion) -> dict:
         for item in results
     )
     domain_rules = {
-        "palworld": "Responde sobre Palworld usando el material local. Distingue datos confirmados de inferencias y no inventes códigos internos.",
+        "palworld": (
+            "Responde sobre Palworld usando el material local. Distingue datos confirmados de inferencias y no inventes "
+            "códigos internos, fechas ni versiones. El catálogo sincronizado, PalDB y las wikis son referencias de datos "
+            "o guías comunitarias: nunca las llames fuentes oficiales salvo que el contexto indique expresamente que una "
+            "entrada procede de un canal oficial de Palworld."
+        ),
         "gamemod": "Ayuda a analizar mods, dumps, LibTool, Unity y Lua de forma técnica y reversible.",
         "libtool": "Ayuda con LibTool, dumps y Lua de manera reversible y segura.",
     }

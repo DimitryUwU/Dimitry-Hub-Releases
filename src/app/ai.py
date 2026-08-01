@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import socket
 import urllib.error
 import urllib.parse
@@ -164,13 +165,30 @@ def _ollama_generate(
     if not model:
         raise AIError("Selecciona un modelo de Ollama en Ajustes")
     chat_messages = []
-    if system:
-        chat_messages.append({"role": "system", "content": system})
-    chat_messages.extend(messages)
+    local_identity = (
+        "Eres la inteligencia artificial local integrada de Dimitry Hub mediante Ollama. "
+        "Esta respuesta solo puede generarse porque Ollama está conectado y operativo. "
+        "Responde siempre en español claro, salvo que la persona solicite expresamente otro idioma, "
+        "y nunca inventes que eres un servicio separado de Dimitry Hub."
+    )
+    chat_messages.append(
+        {"role": "system", "content": f"{system.strip()}\n\n{local_identity}" if system else local_identity}
+    )
+    chat_messages.extend(dict(message) for message in messages)
     payload: dict[str, Any] = {"model": model, "messages": chat_messages, "stream": False}
     think = cfg.get("ollama_think", "off")
     if think in {"low", "medium", "high"}:
         payload["think"] = think
+    else:
+        # Qwen 3 entiende mejor la orden al inicio del último mensaje. El valor
+        # booleano cubre además los modelos que implementan la opción nativa.
+        payload["think"] = False
+        for message in reversed(chat_messages):
+            if message.get("role") == "user":
+                content = str(message.get("content") or "")
+                if not content.lstrip().startswith("/no_think"):
+                    message["content"] = f"/no_think\n{content}"
+                break
     response = _request_json(
         (cfg.get("ollama_url") or "http://127.0.0.1:11434").rstrip("/") + "/api/chat",
         payload=payload,
@@ -178,6 +196,11 @@ def _ollama_generate(
     )
     message = response.get("message", {}) if isinstance(response, dict) else {}
     text = str(message.get("content") or response.get("response") or "").strip()
+    text = re.sub(r"<think>.*?</think>\s*", "", text, flags=re.IGNORECASE | re.DOTALL).strip()
+    # Algunas plantillas entregan el razonamiento sin la etiqueta inicial y
+    # conservan únicamente </think>. En ese caso solo exponemos la respuesta.
+    if re.search(r"</think>", text, flags=re.IGNORECASE):
+        text = re.split(r"</think>", text, flags=re.IGNORECASE)[-1].strip()
     if not text:
         raise AIError("Ollama no devolvió contenido")
     usage = {
