@@ -1,6 +1,6 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "channel": "stable",
   "source_sha256": "9a343f22e8b1b5a8e2690f9cfc24d2614d4ee6596bea67e9ff2ad7429a0982e4",
-  "notes": "Corrige los avisos repetidos de Tema aplicado y Tipografía aplicada que aparecían al hacer clic en cualquier lugar de cualquier pestaña. Los controles de apariencia ahora solo responden a sus botones correspondientes y no vuelven a guardar una selección que ya estaba activa."
+  "notes": "Mejora la instalación y el uso diario: el instalador cierra automáticamente el proceso de Dimitry Hub, el botón superior ahora indica Sincronizar datos y muestra el nombre y detalle de cualquier fuente con error, se corrige la conexión con GitHub del editor de Palworld, el botón con la inicial abre un panel de perfil y control rápido con opción para cerrar realmente la aplicación, y Dimitry AI deja claro cuando todavía no existe ningún proveedor configurado."
 }
